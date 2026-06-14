@@ -8,4 +8,5 @@ public interface EmailService {
     void sendOrderDelivered(Order order);
     void sendReturnApproved(Order order);
     void sendReturnDeclined(Order order);
+    void sendPasswordResetEmail(String toEmail, String resetLink);
 }

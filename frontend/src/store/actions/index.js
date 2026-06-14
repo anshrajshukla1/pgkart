@@ -18,6 +18,22 @@ export const loginUser = (credentials) => async (dispatch) => {
   }
 }
 
+export const googleLoginUser = (idToken) => async (dispatch) => {
+  dispatch({ type: 'AUTH_LOADING' })
+  try {
+    const { data } = await api.post('/api/auth/google', { idToken })
+    dispatch({ type: 'LOGIN_SUCCESS', payload: data })
+    dispatch(fetchCart())
+    toast.success(`Welcome, ${data.username}! 👋`)
+    return data
+  } catch (err) {
+    const msg = err.response?.data?.message || 'Google login failed'
+    dispatch({ type: 'AUTH_ERROR', payload: msg })
+    toast.error(msg)
+    throw err
+  }
+}
+
 export const registerUser = (userData) => async (dispatch) => {
   dispatch({ type: 'AUTH_LOADING' })
   try {

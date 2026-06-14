@@ -40,6 +40,8 @@ public class AuthController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
+    private final com.pgkart.service.PasswordResetService passwordResetService;
+    private final com.pgkart.service.FirebaseAuthService firebaseAuthService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -91,6 +93,51 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new MessageResponse("User registered successfully!"));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody com.pgkart.security.request.ForgotPasswordRequest request) {
+        passwordResetService.createPasswordResetTokenForUser(request.getEmail());
+        return ResponseEntity.ok(new MessageResponse("If an account with that email exists, a password reset link has been sent."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody com.pgkart.security.request.ResetPasswordRequest request) {
+        passwordResetService.resetPassword(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok(new MessageResponse("Password successfully reset"));
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<?> authenticateWithGoogle(@Valid @RequestBody com.pgkart.security.request.GoogleAuthRequest request) {
+        java.util.Map<String, String> userInfo = firebaseAuthService.verifyTokenAndGetUserInfo(request.getIdToken());
+        if (userInfo == null || userInfo.get("email") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Invalid Google token"));
+        }
+
+        String email = userInfo.get("email");
+        User user = userRepository.findByEmail(email).orElse(null);
+        
+        if (user == null) {
+            String username = email.split("@")[0] + "_" + java.util.UUID.randomUUID().toString().substring(0, 5);
+            user = new User(username, email, encoder.encode(java.util.UUID.randomUUID().toString()));
+            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                    .orElseThrow(() -> new ApiException("Error: Role not found"));
+            user.setRoles(Set.of(userRole));
+            userRepository.save(user);
+        }
+
+        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new UserInfoResponse(
+                userDetails.getId(), userDetails.getUsername(),
+                userDetails.getEmail(), roles, jwtToken));
     }
 
     @GetMapping("/username")

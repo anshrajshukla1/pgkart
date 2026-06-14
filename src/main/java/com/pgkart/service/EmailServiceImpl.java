@@ -141,4 +141,19 @@ public class EmailServiceImpl implements EmailService {
             log.error("Failed to send return declined email for order {}", order.getOrderId(), e);
         }
     }
+
+    @Override
+    @Async
+    public void sendPasswordResetEmail(String toEmail, String resetLink) {
+        try {
+            Context context = new Context();
+            context.setVariable("resetLink", resetLink);
+
+            String html = templateEngine.process("email/password-reset", context);
+            sendHtmlEmail(toEmail, "Reset Your Password \u2014 PGKart", html);
+            log.info("Password reset email sent successfully to {}", toEmail);
+        } catch (Exception e) {
+            log.error("Failed to send password reset email to {}: {}", toEmail, e.getMessage());
+        }
+    }
 }
