@@ -11,9 +11,8 @@ INSERT INTO roles (role_name) VALUES ('ROLE_USER') ON CONFLICT (role_name) DO NO
 INSERT INTO roles (role_name) VALUES ('ROLE_ADMIN') ON CONFLICT (role_name) DO NOTHING;
 
 -- 2. Insert the Admin user
--- Password will be 'Admin@123' encrypted with bcrypt
 INSERT INTO users (username, email, password) 
-VALUES ('admin', 'admin@pgkart.online', crypt('Admin@123', gen_salt('bf')))
+VALUES ('admin', 'admin@pgkart.online', '$2b$10$R3NPCeJ7pza90as6kKUNg.z8BVSsiAPmDVhfCYXMD/TbSp3Nm9HLq')
 ON CONFLICT (username) DO NOTHING;
 
 -- 3. Assign ROLE_ADMIN to the Admin user
