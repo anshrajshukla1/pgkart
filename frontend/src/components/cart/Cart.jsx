@@ -83,12 +83,12 @@ export default function Cart() {
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     {/* Quantity stepper */}
-                    <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden', flexShrink: 0, width: 'fit-content' }}>
                       <button onClick={() => handleQuantityChange(product.productId, qty - 1)}
-                        style={{ padding: '0.25rem 0.5rem', background: '#F9FAFB', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
-                      <span style={{ padding: '0.25rem 0.6rem', fontWeight: 600, fontSize: '0.85rem', borderLeft: '1.5px solid #E5E7EB', borderRight: '1.5px solid #E5E7EB', minWidth: '32px', textAlign: 'center', background: 'white' }}>{qty}</span>
+                        style={{ width: '32px', height: '32px', background: '#F9FAFB', border: 'none', cursor: 'pointer', fontSize: '1.1rem', color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>−</button>
+                      <span style={{ width: '36px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.9rem', borderLeft: '1.5px solid #E5E7EB', borderRight: '1.5px solid #E5E7EB', background: 'white', flexShrink: 0 }}>{qty}</span>
                       <button onClick={() => handleQuantityChange(product.productId, qty + 1)}
-                        style={{ padding: '0.25rem 0.5rem', background: '#F9FAFB', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                        style={{ width: '32px', height: '32px', background: '#F9FAFB', border: 'none', cursor: 'pointer', fontSize: '1.1rem', color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>+</button>
                     </div>
 
                     <button onClick={() => dispatch(removeFromCart(cartId, product.productId))}
