@@ -9,16 +9,18 @@ import org.springframework.data.jpa.repository.Query;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.data.repository.query.Param;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByEmail(String email);
 
     @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.product WHERE o.email = :email")
-    List<Order> findByEmailWithItems(@org.springframework.data.repository.query.Param("email") String email);
+    List<Order> findByEmailWithItems(@Param("email") String email);
 
-    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.product WHERE o.orderId = :orderId")
-    java.util.Optional<Order> findByIdWithItems(@org.springframework.data.repository.query.Param("orderId") Long orderId);
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.product LEFT JOIN FETCH o.address WHERE o.orderId = :orderId")
+    Optional<Order> findByIdWithItems(@Param("orderId") Long orderId);
 
     @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.orderDate >= ?1")
     BigDecimal sumRevenueFromDate(LocalDate fromDate);
