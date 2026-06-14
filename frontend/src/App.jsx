@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react'
+import React, { Suspense, lazy, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/shared/Navbar.jsx'
 import Footer from './components/shared/Footer.jsx'
@@ -23,7 +23,18 @@ const AdminProducts = lazy(() => import('./components/admin/products/AdminProduc
 const AdminOrders = lazy(() => import('./components/admin/orders/Orders.jsx'))
 const Category = lazy(() => import('./components/admin/categories/Category.jsx'))
 
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchCart } from './store/actions/index.js'
+
 export default function App() {
+  const dispatch = useDispatch()
+  const { user } = useSelector(state => state.auth)
+
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchCart())
+    }
+  }, [dispatch, user])
   return (
     <BrowserRouter>
       <Suspense fallback={<Loader />}>
