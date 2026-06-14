@@ -175,7 +175,7 @@ export default function Checkout() {
               <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: '1.5rem', fontSize: '1.2rem' }}>
                 📍 Delivery Address
               </h2>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="address-grid">
                 <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                   <label className="form-label">Street Address</label>
                   <input className="form-control" name="street" value={address.street}
