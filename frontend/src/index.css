@@ -1541,3 +1541,13 @@ html, body {
     grid-template-columns: 1fr;
   }
 }
+
+
+@media (max-width: 768px) {
+  .checkout-layout > div,
+  .cart-layout > div {
+    max-width: 550px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}

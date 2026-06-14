@@ -8,6 +8,16 @@ import { fetchCart } from '../../store/actions/index.js'
 
 const STEPS = ['Address', 'Review Order', 'Payment']
 
+const INDIA_STATES = [
+  "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam",
+  "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir",
+  "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh",
+  "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha",
+  "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana",
+  "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
+]
+
 function StepIndicator({ current }) {
   return (
     <div className="checkout-stepper">
@@ -188,8 +198,10 @@ export default function Checkout() {
                 </div>
                 <div className="form-group">
                   <label className="form-label">State</label>
-                  <input className="form-control" name="state" value={address.state}
-                    onChange={handleAddrChange} placeholder="State" />
+                  <select className="form-control" name="state" value={address.state} onChange={handleAddrChange}>
+                    <option value="">Select State</option>
+                    {INDIA_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
                 </div>
                 <div className="form-group">
                   <label className="form-label">PIN Code</label>

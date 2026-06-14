@@ -83,12 +83,12 @@ export default function Cart() {
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     {/* Quantity stepper */}
-                    <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #E5E7EB', borderRadius: '8px', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden' }}>
                       <button onClick={() => handleQuantityChange(product.productId, qty - 1)}
-                        style={{ padding: '0.4rem 0.75rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#374151' }}>−</button>
-                      <span style={{ padding: '0.4rem 0.75rem', fontWeight: 600, borderLeft: '1px solid #E5E7EB', borderRight: '1px solid #E5E7EB', minWidth: '40px', textAlign: 'center' }}>{qty}</span>
+                        style={{ padding: '0.25rem 0.5rem', background: '#F9FAFB', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+                      <span style={{ padding: '0.25rem 0.6rem', fontWeight: 600, fontSize: '0.85rem', borderLeft: '1.5px solid #E5E7EB', borderRight: '1.5px solid #E5E7EB', minWidth: '32px', textAlign: 'center', background: 'white' }}>{qty}</span>
                       <button onClick={() => handleQuantityChange(product.productId, qty + 1)}
-                        style={{ padding: '0.4rem 0.75rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#374151' }}>+</button>
+                        style={{ padding: '0.25rem 0.5rem', background: '#F9FAFB', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
                     </div>
 
                     <button onClick={() => dispatch(removeFromCart(cartId, product.productId))}
