@@ -190,7 +190,7 @@ export const adminFetchAllCategories = () => async () => {
 }
 
 export const adminCreateCategory = (name) => async () => {
-  const { data } = await api.post('/api/admin/category', { categoryName: name })
+  const { data } = await api.post('/api/admin/categories', { categoryName: name })
   return data
 }
 
@@ -200,7 +200,7 @@ export const adminUpdateCategory = (id, name) => async () => {
 }
 
 export const adminDeleteCategory = (id) => async () => {
-  await api.delete(`/api/admin/category/${id}`)
+  await api.delete(`/api/admin/categories/${id}`)
 }
 
 export const adminCreateProduct = (categoryId, productData) => async () => {
