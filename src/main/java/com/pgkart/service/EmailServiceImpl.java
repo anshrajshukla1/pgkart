@@ -1,26 +1,41 @@
 package com.pgkart.service;
 
+import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.Message;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.UserCredentials;
 import com.pgkart.model.Order;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.Properties;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
+
+    @Value("${gmail.client.id}")
+    private String clientId;
+
+    @Value("${gmail.client.secret}")
+    private String clientSecret;
+
+    @Value("${gmail.refresh.token}")
+    private String refreshToken;
 
     @Value("${pgkart.mail.from}")
     private String fromEmail;
@@ -98,22 +113,6 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    // ------------------------------------------------------------------ //
-    //  Internal HTML Sender logic                                           //
-    // ------------------------------------------------------------------ //
-
-    private void sendHtmlEmail(String to, String subject, String htmlBody) throws Exception {
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-        helper.setFrom(fromEmail, fromName);
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(htmlBody, true); // true indicates HTML content
-
-        javaMailSender.send(message);
-    }
-
     @Override
     @Async
     public void sendReturnApproved(Order order) {
@@ -155,5 +154,48 @@ public class EmailServiceImpl implements EmailService {
         } catch (Exception e) {
             log.error("Failed to send password reset email to {}: {}", toEmail, e.getMessage());
         }
+    }
+
+    // ------------------------------------------------------------------ //
+    //  Internal HTML Sender logic (Gmail API)                              //
+    // ------------------------------------------------------------------ //
+
+    private void sendHtmlEmail(String to, String subject, String htmlBody) throws Exception {
+        // 1. Build Credentials
+        UserCredentials credentials = UserCredentials.newBuilder()
+                .setClientId(clientId)
+                .setClientSecret(clientSecret)
+                .setRefreshToken(refreshToken)
+                .build();
+
+        // 2. Build Gmail Service
+        Gmail service = new Gmail.Builder(
+                new com.google.api.client.http.javanet.NetHttpTransport(),
+                com.google.api.client.json.gson.GsonFactory.getDefaultInstance(),
+                new HttpCredentialsAdapter(credentials))
+                .setApplicationName("PGKart")
+                .build();
+
+        // 3. Create a MimeMessage
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        MimeMessage email = new MimeMessage(session);
+
+        email.setFrom(new InternetAddress(fromEmail, fromName));
+        email.addRecipient(jakarta.mail.Message.RecipientType.TO, new InternetAddress(to));
+        email.setSubject(subject);
+        email.setContent(htmlBody, "text/html; charset=utf-8");
+
+        // 4. Encode and wrap for Gmail API
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        email.writeTo(buffer);
+        byte[] rawMessageBytes = buffer.toByteArray();
+        String encodedEmail = Base64.getUrlEncoder().encodeToString(rawMessageBytes);
+
+        Message message = new Message();
+        message.setRaw(encodedEmail);
+
+        // 5. Send via Google API (over port 443, bypassing Render SMTP block)
+        service.users().messages().send("me", message).execute();
     }
 }
