@@ -168,7 +168,7 @@ export default function OrderHistory() {
                       padding: '0.4rem 0', borderBottom: '1px dashed var(--gray-100)'
                     }}>
                       <span style={{ fontSize: '0.875rem', color: 'var(--gray-700)', fontWeight: 500 }}>
-                        {item.productName || `Product #${item.productId}`}
+                        {item.product?.productName || item.productName || `Product #${item.product?.productId || item.productId}`}
                       </span>
                       <span style={{ fontSize: '0.8rem', color: 'var(--gray-500)' }}>
                         Qty: {item.quantity} × ₹{Math.round(item.orderedProductPrice || 0)}

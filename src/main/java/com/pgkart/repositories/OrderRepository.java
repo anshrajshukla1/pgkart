@@ -14,10 +14,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByEmail(String email);
 
-    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems WHERE o.email = :email")
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.product WHERE o.email = :email")
     List<Order> findByEmailWithItems(@org.springframework.data.repository.query.Param("email") String email);
 
-    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems WHERE o.orderId = :orderId")
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.product WHERE o.orderId = :orderId")
     java.util.Optional<Order> findByIdWithItems(@org.springframework.data.repository.query.Param("orderId") Long orderId);
 
     @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.orderDate >= ?1")
