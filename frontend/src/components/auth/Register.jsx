@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet-async'
-import { registerUser } from '../../store/actions/index.js'
-
+import { registerUser, googleLoginUser } from '../../store/actions/index.js'
+import { auth, googleProvider } from '../../firebase.js'
+import { signInWithPopup } from 'firebase/auth'
+import toast from 'react-hot-toast'
 export default function Register() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -43,6 +45,19 @@ export default function Register() {
       }))
       navigate('/login')
     } catch { /* toast already shown */ }
+  }
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider)
+      const idToken = await result.user.getIdToken()
+      await dispatch(googleLoginUser(idToken))
+      navigate('/')
+    } catch (err) {
+      if (err.code !== 'auth/popup-closed-by-user') {
+        toast.error('Google Sign In Error: ' + err.message)
+      }
+    }
   }
 
   return (
@@ -141,6 +156,23 @@ export default function Register() {
             {loading ? '⏳ Creating account...' : 'Create Account 🎉'}
           </button>
         </form>
+
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0' }}>
+          <hr style={{ flex: 1, borderColor: 'var(--gray-200)', borderStyle: 'solid' }} />
+          <span style={{ padding: '0 1rem', color: 'var(--gray-500)', fontSize: '0.875rem' }}>or</span>
+          <hr style={{ flex: 1, borderColor: 'var(--gray-200)', borderStyle: 'solid' }} />
+        </div>
+
+        <button
+          onClick={handleGoogleLogin}
+          type="button"
+          className="btn btn-outline"
+          style={{ width: '100%', padding: '0.85rem', fontSize: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+          disabled={loading}
+        >
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '18px', height: '18px' }} />
+          Continue with Google
+        </button>
 
         <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem', color: 'var(--gray-500)' }}>
           Already have an account?{' '}

@@ -34,7 +34,7 @@ export default function Login() {
       navigate(from, { replace: true })
     } catch (err) {
       if (err.code !== 'auth/popup-closed-by-user') {
-        toast.error('Failed to login with Google')
+        toast.error('Failed to login with Google: ' + err.message)
       }
     }
   }
