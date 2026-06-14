@@ -149,7 +149,7 @@ export default function Checkout() {
   }
 
   const subtotal = Number(totalPrice || 0)
-  const shipping = subtotal > 499 ? 0 : 49
+  const shipping = 0 // subtotal > 499 ? 0 : 49
   const grandTotal = subtotal + shipping
 
   return (
@@ -166,7 +166,7 @@ export default function Checkout() {
 
       <StepIndicator current={step} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2rem', alignItems: 'start' }}>
+      <div className="checkout-layout">
         {/* Main Content */}
         <div>
           {/* Step 0: Address */}

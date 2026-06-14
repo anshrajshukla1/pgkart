@@ -49,7 +49,7 @@ export default function Cart() {
         Your Cart 🛒
       </h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem', alignItems: 'start' }}>
+      <div className="cart-layout">
         {/* Cart Items */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {products.map(product => {
