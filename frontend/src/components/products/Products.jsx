@@ -1,73 +1,194 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { fetchCategories } from "../../store/actions";
-import { LuBadgeAlert } from "react-icons/lu";
+import React, { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Helmet } from 'react-helmet-async'
+import { fetchProducts } from '../../store/actions/index.js'
+import ProductCard from '../shared/ProductCard.jsx'
 
-import Filter from "./Filter";
-import useProductFilter from "../../hooks/useProductFilter";
-import Loader from "../shared/Loader";
-import Paginations from "../shared/Paginations";
-import ProductCard from "../shared/ProductCard";
+const SORT_OPTIONS = [
+  { label: 'Newest First', sortBy: 'productId', sortOrder: 'desc' },
+  { label: 'Price: Low to High', sortBy: 'price', sortOrder: 'asc' },
+  { label: 'Price: High to Low', sortBy: 'price', sortOrder: 'desc' },
+  { label: 'Name A-Z', sortBy: 'productName', sortOrder: 'asc' },
+]
 
-const Products = () => {
-  const { isLoading, errorMessage } = useSelector(
-    (state) => state.errors
-  );
+function SkeletonCard() {
+  return (
+    <div style={{ background: 'white', borderRadius: '20px', border: '1.5px solid #E5E7EB', overflow: 'hidden' }}>
+      <div className="skeleton" style={{ aspectRatio: 1 }} />
+      <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div className="skeleton" style={{ height: '14px', borderRadius: '6px', width: '80%' }} />
+        <div className="skeleton" style={{ height: '14px', borderRadius: '6px', width: '50%' }} />
+        <div className="skeleton" style={{ height: '36px', borderRadius: '8px', marginTop: '0.25rem' }} />
+      </div>
+    </div>
+  )
+}
 
-  const { products, categories, pagination } = useSelector(
-    (state) => state.products
-  );
+export default function Products() {
+  const dispatch = useDispatch()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const { products, loading, totalPages, totalElements } = useSelector(state => state.products)
 
-  const dispatch = useDispatch();
+  const [sortIndex, setSortIndex] = useState(0)
+  const [page, setPage] = useState(0)
 
-  // 🔥 custom hook (fetch products)
-  useProductFilter();
+  const keyword = searchParams.get('search') || ''
+  const category = searchParams.get('category') || ''
 
-  // 🔥 fetch categories
+  const [categories, setCategories] = useState([])
+
+  // Fetch all categories once so we can map name -> id
   useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
+    import('../../api/api.js').then(({ default: api }) => {
+      api.get('/api/public/categories?pageSize=100').then(res => setCategories(res.data.content))
+    })
+  }, [])
+
+  useEffect(() => {
+    let categoryId = undefined
+    if (category) {
+      if (categories.length === 0) return // Wait for categories to load
+      const found = categories.find(c => c.categoryName.toLowerCase() === category.toLowerCase())
+      if (found) categoryId = found.categoryId
+      else {
+        // If category not found, we shouldn't show all products, we should show empty!
+        // A hack is to pass a non-existent categoryId like -1
+        categoryId = -1
+      }
+    }
+
+    const sort = SORT_OPTIONS[sortIndex]
+    dispatch(fetchProducts({
+      pageNumber: page,
+      pageSize: 12,
+      sortBy: sort.sortBy,
+      sortOrder: sort.sortOrder,
+      keyword: keyword || undefined,
+      categoryId
+    }))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [dispatch, page, sortIndex, keyword, category, categories])
+
+  const handleSort = (e) => {
+    setSortIndex(Number(e.target.value))
+    setPage(0)
+  }
+
+  const clearSearch = () => {
+    setSearchParams({})
+    setPage(0)
+  }
 
   return (
-    <div className="page-section py-12">
-      
-      <Filter categories={categories ? categories : []} />
+    <div style={{ minHeight: 'calc(100vh - 64px)', padding: '2rem 1.5rem' }}>
+      <Helmet>
+        <title>Products - PGKart | Hostel Essentials</title>
+      </Helmet>
 
-      {isLoading ? (
-        <Loader />
-      ) : errorMessage ? (
-        <div className="surface-card mx-auto flex h-50 max-w-xl items-center justify-center gap-3 px-6">
-          <LuBadgeAlert className="text-3xl text-slate-800" />
-          <span className="text-slate-800 text-lg font-medium">
-            {errorMessage}
-          </span>
-        </div>
-      ) : (
-        <div className="min-h-[700px]">
-          <div className="grid gap-6 pb-6 pt-10 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2">
-            
-            {products && products.length > 0 ? (
-              products.map((item, i) => (
-                <ProductCard key={i} {...item} />
-              ))
-            ) : (
-              <p className="surface-card col-span-full py-12 text-center text-slate-600">
-                No products found
-              </p>
+      <div className="container">
+        {/* Header */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
+          flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem'
+        }}>
+          <div>
+            <h1 style={{
+              fontFamily: 'var(--font-heading)', fontSize: '1.75rem',
+              fontWeight: 800, color: 'var(--gray-900)', marginBottom: '0.25rem'
+            }}>
+              {keyword ? `Results for "${keyword}"` : category || 'All Products'}
+            </h1>
+            <p style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>
+              {loading ? 'Loading...' : `${totalElements} products found`}
+            </p>
+            {(keyword || category) && (
+              <button
+                onClick={clearSearch}
+                style={{
+                  marginTop: '0.6rem', fontSize: '0.75rem', color: '#1E40AF',
+                  background: '#DBEAFE', border: '1px solid #BFDBFE', padding: '4px 12px',
+                  borderRadius: '16px', cursor: 'pointer', fontWeight: 600,
+                  display: 'inline-flex', alignItems: 'center', gap: '4px',
+                  transition: 'background 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#BFDBFE'}
+                onMouseOut={(e) => e.currentTarget.style.background = '#DBEAFE'}
+              >
+                <span style={{fontSize: '0.9rem', lineHeight: 1}}>×</span> Clear Filter
+              </button>
             )}
-
           </div>
 
-          <div className="flex justify-center pt-10">
-            <Paginations
-              numberOfPage={pagination?.totalPages}
-              totalProducts={pagination?.totalElements}
-            />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--gray-600)' }}>Sort by:</label>
+            <select
+              value={sortIndex}
+              onChange={handleSort}
+              className="form-control"
+              style={{ width: 'auto', padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
+            >
+              {SORT_OPTIONS.map((o, i) => (
+                <option key={i} value={i}>{o.label}</option>
+              ))}
+            </select>
           </div>
         </div>
-      )}
-    </div>
-  );
-};
 
-export default Products;
+        {/* Products Grid */}
+        {loading ? (
+          <div className="products-grid">
+            {Array(12).fill(0).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        ) : products.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-state-icon">🔍</div>
+            <h3>No products found</h3>
+            <p>Try adjusting your search or browse all products.</p>
+          </div>
+        ) : (
+          <div className="products-grid">
+            {products.map(p => <ProductCard key={p.productId} product={p} />)}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="page-btn"
+              onClick={() => setPage(p => Math.max(0, p - 1))}
+              disabled={page === 0}
+            >
+              ←
+            </button>
+            {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+              let pageNum = i
+              if (totalPages > 7) {
+                if (page <= 3) pageNum = i
+                else if (page >= totalPages - 4) pageNum = totalPages - 7 + i
+                else pageNum = page - 3 + i
+              }
+              return (
+                <button
+                  key={pageNum}
+                  className={`page-btn ${page === pageNum ? 'active' : ''}`}
+                  onClick={() => setPage(pageNum)}
+                >
+                  {pageNum + 1}
+                </button>
+              )
+            })}
+            <button
+              className="page-btn"
+              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+              disabled={page >= totalPages - 1}
+            >
+              →
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

@@ -1,52 +1,21 @@
-const initialState = {
-  user: null,
-  address: [],
-  clientSecret: null,
-  selectedUserCheckoutAddress: null,
-};
+const user = JSON.parse(localStorage.getItem('pgkart_user') || 'null')
+const initState = { user, loading: false, error: null }
 
-export const authReducer = (state = initialState, action) => {
+export default function authReducer(state = initState, action) {
   switch (action.type) {
-    case "LOGIN_USER":
-      return {
-        ...state,
-        user: action.payload,
-        address: [],
-        selectedUserCheckoutAddress: null,
-      };
-
-    case "LOG_OUT":
-      return {
-        ...state,
-        user: null,
-        address: [],
-        selectedUserCheckoutAddress: null,
-      };
-
-    case "USER_ADDRESS":
-      return {
-        ...state,
-        address: action.payload,
-      };
-
-    case "SELECT_CHECKOUT_ADDRESS":
-      return {
-        ...state,
-        selectedUserCheckoutAddress: action.payload,
-      };
-
-    case "REMOVE_CHECKOUT_ADDRESS":
-      return {
-        ...state,
-        selectedUserCheckoutAddress: null,
-      };
-
-    case "CLIENT_SECRET":
-            return { ...state, clientSecret: action.payload };
-    case "REMOVE_CLIENT_SECRET_ADDRESS":
-            return { ...state, clientSecret: null, selectedUserCheckoutAddress: null };
- 
+    case 'AUTH_LOADING':
+      return { ...state, loading: true, error: null }
+    case 'AUTH_IDLE':
+      return { ...state, loading: false, error: null }
+    case 'LOGIN_SUCCESS':
+      localStorage.setItem('pgkart_user', JSON.stringify(action.payload))
+      return { ...state, user: action.payload, loading: false, error: null }
+    case 'LOGOUT':
+      localStorage.removeItem('pgkart_user')
+      return { ...state, user: null, loading: false }
+    case 'AUTH_ERROR':
+      return { ...state, error: action.payload, loading: false }
     default:
-      return state;
+      return state
   }
-};
+}

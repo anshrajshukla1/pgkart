@@ -1,144 +1,197 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { DataGrid } from "@mui/x-data-grid";
-import { LuFolderOpen, LuLayers2 } from "react-icons/lu";
-import toast from "react-hot-toast";
+import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { Helmet } from 'react-helmet-async'
+import toast from 'react-hot-toast'
+import {
+  adminFetchAllCategories, adminCreateCategory,
+  adminUpdateCategory, adminDeleteCategory
+} from '../../../store/actions/index.js'
 
-import Modal from "../../shared/Modal";
-import AddCategoryForm from "./AddCategoryForm";
-import Loader from "../../shared/Loader";
-import { DeleteModal } from "../../../components/shared/DeleteModal";
-import useCategoryFilter from "../../../hooks/useCategoryFilter";
-import ErrorPage from "../../shared/ErrorPage";
-import { deleteCategoryDashboardAction } from "../../../store/actions";
-import { categoryTableColumns } from "../../helper/tableColumn";
+export default function Category() {
+  const dispatch = useDispatch()
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [newName, setNewName] = useState('')
+  const [editId, setEditId] = useState(null)
+  const [editName, setEditName] = useState('')
+  const [creating, setCreating] = useState(false)
 
-const Category = () => {
-  const [searchParams] = useSearchParams();
-  const pathname = useLocation().pathname;
-  const params = new URLSearchParams(searchParams);
-  const navigate = useNavigate();
+  const loadCategories = async () => {
+    setLoading(true)
+    try {
+      const data = await dispatch(adminFetchAllCategories())
+      setCategories(data?.content || data || [])
+    } catch {
+      toast.error('Failed to load categories')
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  const dispatch = useDispatch();
-  const [openModal, setOpenModal] = useState(false);
-  const [openUpdateModal, setOpenUpdateModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  useEffect(() => { loadCategories() }, [])
 
-  const { categoryLoader, errorMessage } = useSelector((state) => state.errors);
-  const { categories, pagination } = useSelector((state) => state.products);
-  const [currentPage, setCurrentPage] = useState(pagination?.pageNumber + 1 || 1);
+  const handleCreate = async (e) => {
+    e.preventDefault()
+    if (!newName.trim()) return
+    setCreating(true)
+    try {
+      await dispatch(adminCreateCategory(newName.trim()))
+      toast.success(`Category "${newName}" created!`)
+      setNewName('')
+      loadCategories()
+    } catch {
+      toast.error('Failed to create category')
+    } finally {
+      setCreating(false)
+    }
+  }
 
-  useCategoryFilter();
+  const handleUpdate = async (id) => {
+    if (!editName.trim()) return
+    try {
+      await dispatch(adminUpdateCategory(id, editName.trim()))
+      toast.success('Category updated!')
+      setEditId(null)
+      setEditName('')
+      loadCategories()
+    } catch {
+      toast.error('Failed to update category')
+    }
+  }
 
-  const tableRecords = categories?.map((item) => ({
-    id: item.categoryId,
-    categoryName: item.categoryName,
-    version: item.version,
-  }));
-
-  const handleEdit = (category) => {
-    setOpenUpdateModal(true);
-    setSelectedCategory(category);
-  };
-
-  const handleDelete = (category) => {
-    setSelectedCategory(category);
-    setOpenDeleteModal(true);
-  };
-
-  const onDeleteHandler = () => {
-    dispatch(
-      deleteCategoryDashboardAction(setOpenDeleteModal, selectedCategory?.id, toast)
-    );
-  };
-
-  const handlePaginationChange = (paginationModel) => {
-    const page = paginationModel.page + 1;
-    setCurrentPage(page);
-    params.set("page", page.toString());
-    navigate(`${pathname}?${params}`);
-  };
-
-  const emptyCategories = !categories || categories?.length === 0;
-
-  if (errorMessage) return <ErrorPage message={errorMessage} />;
+  const handleDelete = async (id, name) => {
+    if (!window.confirm(`Delete category "${name}"? This may affect products.`)) return
+    try {
+      await dispatch(adminDeleteCategory(id))
+      toast.success(`Category "${name}" deleted`)
+      loadCategories()
+    } catch {
+      toast.error('Failed to delete category')
+    }
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="admin-page-header">
-        <div>
-          <h1 className="admin-page-title">Categories</h1>
-          <p className="admin-page-copy">
-            Organize your catalog with better hierarchy and cleaner management tools.
-          </p>
-        </div>
-        <button onClick={() => setOpenModal(true)} className="btn-primary">
-          <LuLayers2 className="text-lg" />
-          Add Category
-        </button>
+    <div>
+      <Helmet><title>Categories - PGKart Admin</title></Helmet>
+
+      <div className="admin-header">
+        <h1>🗂️ Categories</h1>
+        <span style={{ fontSize: '0.875rem', color: 'var(--gray-500)' }}>
+          {categories.length} categories
+        </span>
       </div>
 
-      {categoryLoader ? (
-        <Loader />
-      ) : emptyCategories ? (
-        <div className="surface-card flex flex-col items-center justify-center py-16 text-gray-600">
-          <LuFolderOpen size={52} className="mb-3" />
-          <h2 className="text-2xl font-semibold">No Categories Created Yet</h2>
-        </div>
-      ) : (
-        <div className="data-grid-shell">
-          <DataGrid
-            className="w-full"
-            rows={tableRecords}
-            columns={categoryTableColumns(handleEdit, handleDelete)}
-            paginationMode="server"
-            rowCount={pagination?.totalElements || 0}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: pagination?.pageSize || 10,
-                  page: currentPage - 1,
-                },
-              },
-            }}
-            onPaginationModelChange={handlePaginationChange}
-            disableRowSelectionOnClick
-            disableColumnResize
-            pageSizeOptions={[pagination?.pageSize || 10]}
-            pagination
-            paginationOptions={{
-              showFirstButton: true,
-              showLastButton: true,
-              hideNextButton: currentPage === pagination?.totalPages,
-            }}
+      {/* Create new */}
+      <form
+        onSubmit={handleCreate}
+        style={{
+          background: 'white', borderRadius: '16px', padding: '1.5rem',
+          border: '1.5px solid var(--gray-200)', marginBottom: '1.5rem',
+          boxShadow: 'var(--shadow)', display: 'flex', gap: '0.75rem', alignItems: 'flex-end'
+        }}
+      >
+        <div className="form-group" style={{ margin: 0, flex: 1 }}>
+          <label className="form-label">New Category Name</label>
+          <input
+            className="form-control"
+            type="text"
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+            placeholder="e.g. Bath & Toiletries"
+            required
           />
         </div>
-      )}
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={creating || !newName.trim()}
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          {creating ? '⏳ Creating...' : '+ Add Category'}
+        </button>
+      </form>
 
-      <Modal
-        open={openUpdateModal || openModal}
-        setOpen={openUpdateModal ? setOpenUpdateModal : setOpenModal}
-        title={openUpdateModal ? "Update Category" : "Add Category"}
-      >
-        <AddCategoryForm
-          setOpen={openUpdateModal ? setOpenUpdateModal : setOpenModal}
-          open={categoryLoader}
-          category={selectedCategory}
-          update={openUpdateModal}
-        />
-      </Modal>
-
-      <DeleteModal
-        open={openDeleteModal}
-        loader={categoryLoader}
-        setOpen={setOpenDeleteModal}
-        title="Are you want to delete this category"
-        onDeleteHandler={onDeleteHandler}
-      />
+      {/* Categories list */}
+      <div style={{
+        background: 'white', borderRadius: '20px', overflow: 'hidden',
+        border: '1.5px solid var(--gray-200)', boxShadow: 'var(--shadow)'
+      }}>
+        {loading ? (
+          <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {Array(6).fill(0).map((_, i) => (
+              <div key={i} className="skeleton" style={{ height: '56px', borderRadius: '8px' }} />
+            ))}
+          </div>
+        ) : categories.length === 0 ? (
+          <div className="empty-state" style={{ padding: '3rem' }}>
+            <div className="empty-state-icon">🗂️</div>
+            <h3>No categories yet</h3>
+            <p>Create your first category above.</p>
+          </div>
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Category Name</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories.map(cat => (
+                <tr key={cat.categoryId}>
+                  <td style={{ color: 'var(--gray-400)', fontSize: '0.8rem', width: '60px' }}>
+                    #{cat.categoryId}
+                  </td>
+                  <td>
+                    {editId === cat.categoryId ? (
+                      <input
+                        className="form-control"
+                        style={{ maxWidth: '320px', padding: '0.4rem 0.75rem', fontSize: '0.875rem' }}
+                        value={editName}
+                        onChange={e => setEditName(e.target.value)}
+                        autoFocus
+                        onKeyDown={e => { if (e.key === 'Enter') handleUpdate(cat.categoryId); if (e.key === 'Escape') setEditId(null) }}
+                      />
+                    ) : (
+                      <span style={{ fontWeight: 600, color: 'var(--gray-800)' }}>
+                        🗂️ {cat.categoryName}
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ textAlign: 'right' }}>
+                    {editId === cat.categoryId ? (
+                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                        <button className="btn btn-success" style={{ padding: '0.4rem 0.9rem', fontSize: '0.8rem' }}
+                          onClick={() => handleUpdate(cat.categoryId)}>Save</button>
+                        <button className="btn btn-outline" style={{ padding: '0.4rem 0.9rem', fontSize: '0.8rem' }}
+                          onClick={() => setEditId(null)}>Cancel</button>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                        <button
+                          className="btn btn-outline"
+                          style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+                          onClick={() => { setEditId(cat.categoryId); setEditName(cat.categoryName) }}
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+                          onClick={() => handleDelete(cat.categoryId, cat.categoryName)}
+                        >
+                          🗑️ Delete
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
-  );
-};
-
-export default Category;
+  )
+}

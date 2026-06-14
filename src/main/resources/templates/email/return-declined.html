@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Return Declined - PGKart</title>
+</head>
+<body style="margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;background:#f4f4f8;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f8;padding:40px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <tr>
+          <td style="background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);padding:40px 32px;text-align:center;">
+            <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:800;">🛒 PGKart</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#FEF2F2;padding:24px 32px;text-align:center;border-bottom:2px solid #FCA5A5;">
+            <p style="margin:0;font-size:40px;">❌</p>
+            <h2 style="margin:8px 0 0;color:#991B1B;font-size:22px;font-weight:700;">Return Declined</h2>
+            <p style="margin:6px 0 0;color:#6B7280;font-size:14px;">Your return request has been declined.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px;text-align:center;">
+            <p style="color:#374151;font-size:15px;line-height:1.6;">
+                Hi <strong th:text="${customerName}"></strong>, <br><br>
+                We have reviewed your return request, but unfortunately, we are unable to process it at this time because it does not meet our return policy guidelines.
+                <br><br>
+                If you believe this is an error or need further assistance, please contact our support team.
+            </p>
+            <a href="mailto:support@pgkart.in" style="display:inline-block;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;margin-top:16px;">
+              Contact Support
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#F9FAFB;padding:24px 32px;text-align:center;border-top:1px solid #E5E7EB;">
+            <p style="margin:0;color:#9CA3AF;font-size:12px;">© 2024 PGKart. Made with ❤️ for students.</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

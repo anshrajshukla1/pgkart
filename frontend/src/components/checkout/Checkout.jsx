@@ -1,183 +1,349 @@
-import { Button, Step, StepLabel, Stepper } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import { LuArrowLeft, LuArrowRight, LuShieldCheck } from "react-icons/lu";
-import AddressInfo from "./AddressInfo";
-import { useDispatch, useSelector } from "react-redux";
-import { createUserCart, getUserAddresses, getUserCart } from "../../store/actions";
-import toast from "react-hot-toast";
-import Skeleton from "../shared/Skeleton";
-import ErrorPage from "../shared/ErrorPage";
-import PaymentMethod from "./PaymentMethod";
-import OrderSummary from "./OrderSummary";
-import StripePayment from "./StripePayment";
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { Helmet } from 'react-helmet-async'
+import toast from 'react-hot-toast'
+import api from '../../api/api.js'
+import { fetchCart } from '../../store/actions/index.js'
 
-const Checkout = () => {
-  const [activeStep, setActiveStep] = useState(0);
-  const [checkoutLoading, setCheckoutLoading] = useState(() => {
-    const token = localStorage.getItem("token")?.trim();
-    return Boolean(token);
-  });
-  const [isSyncingCart, setIsSyncingCart] = useState(false);
+const STEPS = ['Address', 'Review Order', 'Payment']
 
-  const dispatch = useDispatch();
+function StepIndicator({ current }) {
+  return (
+    <div className="checkout-stepper">
+      {STEPS.map((s, i) => (
+        <React.Fragment key={s}>
+          <div className={`step ${i === current ? 'active' : ''} ${i < current ? 'completed' : ''}`}>
+            <div className="step-number">
+              {i < current ? '✓' : i + 1}
+            </div>
+            <span className="step-label">{s}</span>
+          </div>
+          {i < STEPS.length - 1 && (
+            <div className={`step-connector ${i < current ? 'completed' : ''}`} />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  )
+}
 
-  const { errorMessage } = useSelector((state) => state.errors);
-  const { cart, totalPrice, cartId } = useSelector((state) => state.carts);
-  const { address, selectedUserCheckoutAddress } = useSelector((state) => state.auth);
-  const { paymentMethod } = useSelector((state) => state.payment);
-  const initialLocalCartRef = useRef(cart);
+export default function Checkout() {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { products, totalPrice, cartId } = useSelector(state => state.cart)
+  const auth = useSelector(state => state.auth)
 
-  const steps = ["Address", "Payment Method", "Order Summary", "Payment"];
+  const [step, setStep] = useState(0)
+  const [address, setAddress] = useState({
+    street: '', city: '', state: '', country: 'India',
+    pincode: '', mobileNumber: ''
+  })
+  const [placing, setPlacing] = useState(false)
 
-  useEffect(() => {
-    const token = localStorage.getItem("token")?.trim();
+  const handleAddrChange = e => setAddress(a => ({ ...a, [e.target.name]: e.target.value }))
 
-    if (!token) {
-      return;
+  const validateAddress = () => {
+    const { street, city, state, pincode, mobileNumber } = address
+    if (!street || !city || !state || !pincode || !mobileNumber) {
+      toast.error('Please fill all address fields')
+      return false
     }
+    if (!/^\d{6}$/.test(pincode)) { toast.error('Enter a valid 6-digit PIN code'); return false }
+    if (!/^\d{10}$/.test(mobileNumber)) { toast.error('Enter a valid 10-digit mobile number'); return false }
+    return true
+  }
 
-    let isMounted = true;
-
-    const loadCheckoutData = async () => {
-      setCheckoutLoading(true);
-
-      await Promise.all([dispatch(getUserAddresses()), dispatch(getUserCart())]);
-
-      if (isMounted) {
-        setCheckoutLoading(false);
+  const handlePlaceOrder = async () => {
+    if (placing) return  // prevent double-click
+    setPlacing(true)
+    try {
+      // 1. Save Address (strip mobileNumber if backend rejects it, or keep — now supported)
+      const addressPayload = {
+        street: address.street,
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode,
+        country: address.country,
+        mobileNumber: address.mobileNumber
       }
-    };
+      const { data: savedAddress } = await api.post('/api/addresses', addressPayload)
 
-    loadCheckoutData();
+      // 2. Create Razorpay Order
+      const amountInPaise = Math.round(grandTotal * 100)
+      const { data: rzpOrder } = await api.post('/api/payment/razorpay/create-order', {
+        amount: amountInPaise,
+        currency: 'INR',
+        pgkartOrderId: cartId
+      })
 
-    return () => {
-      isMounted = false;
-    };
-  }, [dispatch]);
-
-  const isStepInvalid = () => {
-    if (activeStep === 0) return !selectedUserCheckoutAddress;
-    if (activeStep === 1) return !paymentMethod;
-    return false;
-  };
-
-  const handleNext = async () => {
-    if (activeStep === 0 && !selectedUserCheckoutAddress) {
-      toast.error("Please select checkout address before proceeding.");
-      return;
-    }
-
-    if (activeStep === 1 && (!selectedUserCheckoutAddress || !paymentMethod)) {
-      toast.error("Please select address and payment method before proceeding.");
-      return;
-    }
-
-    if (
-      activeStep === 1 &&
-      !cartId &&
-      cart.length === 0 &&
-      initialLocalCartRef.current.length > 0
-    ) {
-      setIsSyncingCart(true);
-      const cartCreated = await dispatch(createUserCart(initialLocalCartRef.current));
-      setIsSyncingCart(false);
-
-      if (!cartCreated) {
-        return;
+      // 3. Load Razorpay script
+      if (!window.Razorpay) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script')
+          s.src = 'https://checkout.razorpay.com/v1/checkout.js'
+          s.onload = resolve
+          s.onerror = () => reject(new Error('Failed to load Razorpay SDK'))
+          document.body.appendChild(s)
+        })
       }
 
-      initialLocalCartRef.current = [];
+      // 4. Open Razorpay checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: rzpOrder.amount,
+        currency: rzpOrder.currency || 'INR',
+        name: 'PGKart',
+        description: 'Hostel Essentials Order',
+        order_id: rzpOrder.razorpayOrderId,
+        prefill: {
+          name: auth?.user?.username || '',
+          contact: address.mobileNumber
+        },
+        theme: { color: '#4F46E5' },
+        handler: async (response) => {
+          try {
+            await api.post('/api/payment/razorpay/verify', {
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpaySignature: response.razorpay_signature,
+              addressId: savedAddress.addressId
+            })
+            dispatch(fetchCart())
+            toast.success('🎉 Order placed successfully!')
+            navigate('/orders')
+          } catch (e) {
+            console.error('Verify error:', e)
+            toast.error('Payment verification failed. Contact support.')
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setPlacing(false)
+            toast('Payment cancelled', { icon: 'ℹ️' })
+          }
+        }
+      }
+      const rzp = new window.Razorpay(options)
+      rzp.on('payment.failed', (resp) => {
+        console.error('Razorpay payment failed:', resp.error)
+        toast.error('Payment failed: ' + (resp.error?.description || 'Unknown error'))
+        setPlacing(false)
+      })
+      rzp.open()
+    } catch (err) {
+      console.error('Checkout error:', err.response?.data || err.message)
+      toast.error(err.response?.data?.message || err.message || 'Failed to create order. Try again.')
+      setPlacing(false)
     }
+  }
 
-    setActiveStep((prev) => prev + 1);
-  };
+  if (!products || products.length === 0) {
+    return (
+      <div className="empty-state" style={{ minHeight: 'calc(100vh - 64px)' }}>
+        <div className="empty-state-icon">🛒</div>
+        <h3>Your cart is empty</h3>
+        <button className="btn btn-primary" onClick={() => navigate('/products')}>Browse Products</button>
+      </div>
+    )
+  }
 
-  const handleBack = () => {
-    setActiveStep((prev) => prev - 1);
-  };
+  const subtotal = Number(totalPrice || 0)
+  const shipping = subtotal > 499 ? 0 : 49
+  const grandTotal = subtotal + shipping
 
   return (
-    <div className="page-section min-h-[calc(100vh-100px)] py-12 pb-36">
-      <div className="surface-card mb-8 px-6 py-8">
-        <div className="mb-8 flex flex-col gap-3">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-600">
-            <LuShieldCheck />
-            Secure checkout
-          </span>
-          <h1 className="section-heading !text-[2.6rem]">Checkout</h1>
-          <p className="section-subtext">
-            Review your order in clear steps: cart details, delivery address, payment method, and confirmation.
-          </p>
-        </div>
+    <div style={{
+      minHeight: 'calc(100vh - 64px)', padding: '2rem 1.5rem',
+      maxWidth: '900px', margin: '0 auto'
+    }}>
+      <Helmet><title>Checkout - PGKart</title></Helmet>
 
-        <Stepper activeStep={activeStep} alternativeLabel className="checkout-stepper">
-          {steps.map((label, index) => (
-            <Step key={index}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-      </div>
+      <h1 style={{
+        fontFamily: 'var(--font-heading)', fontSize: '1.75rem', fontWeight: 800,
+        color: 'var(--gray-900)', marginBottom: '2rem'
+      }}>Checkout</h1>
 
-      {checkoutLoading || isSyncingCart ? (
-        <div className="surface-card mx-auto py-5 lg:w-[80%]">
-          <Skeleton />
-        </div>
-      ) : (
-        <div className="mt-5">
-          {activeStep === 0 && <AddressInfo address={address} />}
-          {activeStep === 1 && <PaymentMethod />}
-          {activeStep === 2 && (
-            <OrderSummary
-              totalPrice={totalPrice}
-              cart={cart}
-              address={selectedUserCheckoutAddress}
-              paymentMethod={paymentMethod}
-            />
+      <StepIndicator current={step} />
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2rem', alignItems: 'start' }}>
+        {/* Main Content */}
+        <div>
+          {/* Step 0: Address */}
+          {step === 0 && (
+            <div style={{ background: 'white', borderRadius: '20px', padding: '2rem', border: '1.5px solid var(--gray-200)' }}>
+              <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: '1.5rem', fontSize: '1.2rem' }}>
+                📍 Delivery Address
+              </h2>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                  <label className="form-label">Street Address</label>
+                  <input className="form-control" name="street" value={address.street}
+                    onChange={handleAddrChange} placeholder="Room no., Building, Street" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">City</label>
+                  <input className="form-control" name="city" value={address.city}
+                    onChange={handleAddrChange} placeholder="City" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">State</label>
+                  <input className="form-control" name="state" value={address.state}
+                    onChange={handleAddrChange} placeholder="State" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">PIN Code</label>
+                  <input className="form-control" name="pincode" value={address.pincode}
+                    onChange={handleAddrChange} placeholder="6-digit PIN" maxLength={6} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Mobile Number</label>
+                  <input className="form-control" name="mobileNumber" value={address.mobileNumber}
+                    onChange={handleAddrChange} placeholder="10-digit mobile" maxLength={10} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Country</label>
+                  <input className="form-control" name="country" value={address.country}
+                    onChange={handleAddrChange} placeholder="Country" />
+                </div>
+              </div>
+              <button
+                className="btn btn-primary"
+                style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
+                onClick={() => { if (validateAddress()) setStep(1) }}
+              >
+                Continue to Review →
+              </button>
+            </div>
           )}
 
-          {activeStep === 3 && <StripePayment />}
-        </div>
-      )}
+          {/* Step 1: Review */}
+          {step === 1 && (
+            <div>
+              {/* Address Summary */}
+              <div style={{
+                background: 'white', borderRadius: '16px', padding: '1.5rem',
+                border: '1.5px solid var(--gray-200)', marginBottom: '1rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1rem' }}>📍 Delivery Address</h3>
+                  <button onClick={() => setStep(0)}
+                    style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem' }}>
+                    Edit
+                  </button>
+                </div>
+                <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', lineHeight: 1.6 }}>
+                  {address.street}, {address.city}, {address.state} - {address.pincode}<br />
+                  📱 {address.mobileNumber}
+                </p>
+              </div>
 
-      <div className="fixed bottom-0 left-0 z-50 w-full border-t border-white/70 bg-white/90 px-4 py-4 shadow-[0_-18px_40px_-32px_rgba(15,23,42,0.4)] backdrop-blur-xl">
-        <div className="page-section flex items-center justify-between">
-          <Button
-            variant="outlined"
-            disabled={activeStep === 0}
-            onClick={handleBack}
-            className={`!rounded-2xl !px-6 !py-3 !font-semibold !normal-case ${
-              activeStep === 0
-                ? "!border-slate-200 !bg-slate-100 !text-slate-400"
-                : "!border-slate-300 !bg-white !text-slate-700"
-            }`}
-          >
-            <span className="inline-flex items-center gap-2">
-              <LuArrowLeft />
-              Back
+              {/* Items */}
+              <div style={{
+                background: 'white', borderRadius: '16px', padding: '1.5rem',
+                border: '1.5px solid var(--gray-200)', marginBottom: '1rem'
+              }}>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1rem', marginBottom: '1rem' }}>
+                  🛒 Order Items ({products.length})
+                </h3>
+                {products.map(item => {
+                  const qty = Number(item.quantity || 1)
+                  const price = Number(item.specialPrice || item.price || 0)
+                  return (
+                    <div key={item.productId} style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      padding: '0.6rem 0', borderBottom: '1px solid var(--gray-100)'
+                    }}>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--gray-800)' }}>{item.productName}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>Qty: {qty}</div>
+                      </div>
+                      <div style={{ fontWeight: 700, color: 'var(--primary)' }}>
+                        ₹{Math.round(price * qty)}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <button
+                className="btn btn-primary"
+                style={{ width: '100%', padding: '0.85rem' }}
+                onClick={() => setStep(2)}
+              >
+                Continue to Payment →
+              </button>
+            </div>
+          )}
+
+          {/* Step 2: Payment */}
+          {step === 2 && (
+            <div style={{
+              background: 'white', borderRadius: '20px', padding: '2rem',
+              border: '1.5px solid var(--gray-200)', textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💳</div>
+              <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, marginBottom: '0.5rem' }}>
+                Secure Payment
+              </h2>
+              <p style={{ color: 'var(--gray-500)', marginBottom: '2rem', fontSize: '0.9rem' }}>
+                Pay safely via Razorpay. Supports UPI, cards, and netbanking.
+              </p>
+
+              <div style={{
+                background: '#EEF2FF', borderRadius: '12px', padding: '1.25rem',
+                marginBottom: '2rem', border: '1px solid #C7D2FE'
+              }}>
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  {['💳 Cards', '📱 UPI', '🏦 Netbanking'].map(m => (
+                    <span key={m} style={{
+                      background: 'white', borderRadius: '8px', padding: '0.4rem 0.9rem',
+                      fontSize: '0.8rem', fontWeight: 600, color: 'var(--primary)',
+                      border: '1px solid #C7D2FE'
+                    }}>{m}</span>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                className="btn btn-primary"
+                style={{ width: '100%', padding: '0.95rem', fontSize: '1.05rem' }}
+                disabled={placing}
+                onClick={handlePlaceOrder}
+              >
+                {placing ? '⏳ Processing...' : `🔒 Pay ₹${Math.round(grandTotal)}`}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Order Summary Sidebar */}
+        <div className="order-summary-card">
+          <h3>Order Summary</h3>
+          {products.map(item => {
+            const qty = Number(item.quantity || 1)
+            const price = Number(item.specialPrice || item.price || 0)
+            return (
+              <div key={item.productId} className="summary-row" style={{ fontSize: '0.8rem' }}>
+                <span style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {item.productName} ×{qty}
+                </span>
+                <span>₹{Math.round(price * qty)}</span>
+              </div>
+            )
+          })}
+          <div className="summary-row">
+            <span>Shipping</span>
+            <span style={{ color: 'var(--success)', fontWeight: 600 }}>
+              {shipping === 0 ? 'FREE' : `₹${shipping}`}
             </span>
-          </Button>
-
-          {activeStep !== steps.length - 1 && (
-            <button
-              disabled={Boolean(errorMessage) || isStepInvalid() || checkoutLoading || isSyncingCart}
-              onClick={handleNext}
-              className={`inline-flex h-12 items-center gap-2 rounded-2xl px-8 font-semibold text-white transition-all duration-200 ${
-                errorMessage || isStepInvalid() || checkoutLoading || isSyncingCart
-                  ? "cursor-not-allowed bg-indigo-300"
-                  : "bg-gradient-to-r from-indigo-500 to-sky-500 shadow-[0_20px_35px_-22px_rgba(99,102,241,0.9)] hover:scale-105"
-              }`}
-            >
-              Proceed
-              <LuArrowRight />
-            </button>
-          )}
+          </div>
+          <div className="summary-total">
+            <span>Total</span>
+            <span>₹{Math.round(grandTotal)}</span>
+          </div>
         </div>
       </div>
-
-      {errorMessage && <ErrorPage message={errorMessage} />}
     </div>
-  );
-};
-
-export default Checkout;
+  )
+}

@@ -1,50 +1,32 @@
-import axios from "axios";
+import axios from 'axios'
+
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_BACK_END_URL}/api`,
-});
+  baseURL: BASE_URL,
+  withCredentials: false,
+})
 
-api.interceptors.request.use(async (config) => {
-  let token = localStorage.getItem("token")?.trim();
-  let retries = 3;
-
-  while (!token && retries > 0) {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    token = localStorage.getItem("token")?.trim();
-    retries--;
+// Attach JWT token to every request
+api.interceptors.request.use(config => {
+  const user = JSON.parse(localStorage.getItem('pgkart_user') || 'null')
+  if (user?.jwtToken) {
+    config.headers.Authorization = `Bearer ${user.jwtToken}`
   }
+  return config
+})
 
-  if (token) {
-    config.headers = config.headers || {};
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
-
+// Handle 401 globally — but NEVER redirect when the failed request IS the login endpoint
 api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-
-    if (
-      error.response?.status === 401 &&
-      originalRequest &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true;
-
-      const token = localStorage.getItem("token")?.trim();
-
-      if (token) {
-        originalRequest.headers = originalRequest.headers || {};
-        originalRequest.headers.Authorization = `Bearer ${token}`;
-        return api(originalRequest);
-      }
+  response => response,
+  error => {
+    const isLoginRequest = error.config?.url?.includes('/api/auth/signin')
+    if (error.response?.status === 401 && !isLoginRequest) {
+      localStorage.removeItem('pgkart_user')
+      window.location.href = '/login'
     }
-
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
-export default api;
+export default api
