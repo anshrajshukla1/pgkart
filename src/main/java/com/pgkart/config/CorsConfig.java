@@ -23,8 +23,8 @@ public class CorsConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "https://pgkart.in",
-                "https://www.pgkart.in",
+                "https://pgkart.online",
+                "https://www.pgkart.online",
                 frontendUrl
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
