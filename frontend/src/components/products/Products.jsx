@@ -81,7 +81,7 @@ export default function Products() {
   }
 
   return (
-    <div style={{ minHeight: 'calc(100vh - 64px)', padding: '2rem 1.5rem' }}>
+    <div style={{ minHeight: 'calc(100vh - 64px)', padding: '2.5rem 1.5rem', background: 'linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%)' }}>
       <Helmet>
         <title>Products - PGKart | Hostel Essentials</title>
       </Helmet>
@@ -94,10 +94,11 @@ export default function Products() {
         }}>
           <div>
             <h1 style={{
-              fontFamily: 'var(--font-heading)', fontSize: '1.75rem',
-              fontWeight: 800, color: 'var(--gray-900)', marginBottom: '0.25rem'
+              fontFamily: 'var(--font-heading)', fontSize: '2.25rem',
+              fontWeight: 800, color: 'var(--gray-900)', marginBottom: '0.25rem',
+              letterSpacing: '-0.02em'
             }}>
-              {keyword ? `Results for "${keyword}"` : category || 'All Products'}
+              {keyword ? `🔍 Results for "${keyword}"` : category ? `✨ ${category}` : '🛍️ All Products'}
             </h1>
             <p style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>
               {loading ? 'Loading...' : `${totalElements} products found`}
@@ -125,8 +126,7 @@ export default function Products() {
             <select
               value={sortIndex}
               onChange={handleSort}
-              className="form-control"
-              style={{ width: 'auto', padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
+              style={{ width: 'auto', padding: '0.6rem 1rem', fontSize: '0.9rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: 'white', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', fontWeight: 600, color: 'var(--gray-700)', outline: 'none' }}
             >
               {SORT_OPTIONS.map((o, i) => (
                 <option key={i} value={i}>{o.label}</option>
