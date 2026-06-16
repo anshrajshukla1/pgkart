@@ -113,6 +113,17 @@ export default function OrderHistory() {
         📦 My Orders
       </h1>
 
+      <div style={{
+        background: '#FFFBEB', color: '#B45309', padding: '1rem', 
+        borderRadius: '12px', marginBottom: '2rem', border: '1px solid #FEF3C7',
+        display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem'
+      }}>
+        <span style={{ fontSize: '1.25rem' }}>📧</span>
+        <div>
+          <strong>Didn't receive order updates?</strong> Please check your email's <strong>Spam</strong> or <strong>Junk</strong> folder for order confirmation and future updates.
+        </div>
+      </div>
+
       {!orders || orders.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">📦</div>
