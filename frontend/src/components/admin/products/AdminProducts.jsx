@@ -68,7 +68,7 @@ export default function AdminProducts() {
       price: product.price || '',
       discount: product.discount || '',
       quantity: product.quantity || '',
-      categoryId: product.category?.categoryId || '',
+      categoryId: categories.find(c => c.categoryName === product.categoryName)?.categoryId || '',
       isFeatured: product.isFeatured || false
     })
     setEditId(product.productId)
