@@ -46,7 +46,7 @@ export default function Home() {
     const fetchFeatured = async () => {
       try {
         const res = await api.get('/api/public/products/featured')
-        setFeaturedProducts(res.data)
+        setFeaturedProducts(res.data.content || [])
       } catch (err) {
         console.error(err)
       } finally {
