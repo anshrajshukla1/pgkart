@@ -61,7 +61,7 @@ export default function Products() {
     const sort = SORT_OPTIONS[sortIndex]
     dispatch(fetchProducts({
       pageNumber: page,
-      pageSize: 12,
+      pageSize: 50,
       sortBy: sort.sortBy,
       sortOrder: sort.sortOrder,
       keyword: keyword || undefined,

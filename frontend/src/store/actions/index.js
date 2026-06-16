@@ -62,7 +62,7 @@ export const fetchProducts = (params = {}) => async (dispatch) => {
   try {
     const {
       pageNumber = 0,
-      pageSize = 12,
+      pageSize = 50,
       sortBy = 'productId',
       sortOrder = 'asc',
       keyword,

@@ -32,7 +32,7 @@ export default function AdminProducts() {
   const loadProducts = async (p = 0) => {
     setLoading(true)
     try {
-      const res = await api.get(`/api/public/products?pageNumber=${p}&pageSize=12`)
+      const res = await api.get(`/api/public/products?pageNumber=${p}&pageSize=50`)
       setProducts(res?.data?.content || [])
       setTotalPages(res?.data?.totalPages || 0)
     } catch {
