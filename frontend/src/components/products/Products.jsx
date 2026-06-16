@@ -135,6 +135,52 @@ export default function Products() {
           </div>
         </div>
 
+        {/* Categories Strip */}
+        {categories.length > 0 && (
+          <div style={{
+            display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '2rem',
+            scrollbarWidth: 'none', msOverflowStyle: 'none'
+          }} className="hide-scrollbar">
+            <button
+              onClick={() => {
+                const newParams = new URLSearchParams(searchParams)
+                newParams.delete('category')
+                setSearchParams(newParams)
+                setPage(0)
+              }}
+              style={{
+                padding: '0.5rem 1.25rem', borderRadius: '24px', whiteSpace: 'nowrap', fontWeight: 600, fontSize: '0.9rem',
+                border: !category ? 'none' : '1.5px solid var(--gray-200)',
+                background: !category ? 'var(--primary)' : 'white',
+                color: !category ? 'white' : 'var(--gray-700)',
+                cursor: 'pointer', transition: 'all 0.2s', boxShadow: !category ? '0 4px 12px rgba(79,70,229,0.2)' : 'none'
+              }}
+            >
+              All Products
+            </button>
+            {categories.map(c => (
+              <button
+                key={c.categoryId}
+                onClick={() => {
+                  const newParams = new URLSearchParams(searchParams)
+                  newParams.set('category', c.categoryName)
+                  setSearchParams(newParams)
+                  setPage(0)
+                }}
+                style={{
+                  padding: '0.5rem 1.25rem', borderRadius: '24px', whiteSpace: 'nowrap', fontWeight: 600, fontSize: '0.9rem',
+                  border: category === c.categoryName ? 'none' : '1.5px solid var(--gray-200)',
+                  background: category === c.categoryName ? 'var(--primary)' : 'white',
+                  color: category === c.categoryName ? 'white' : 'var(--gray-700)',
+                  cursor: 'pointer', transition: 'all 0.2s', boxShadow: category === c.categoryName ? '0 4px 12px rgba(79,70,229,0.2)' : 'none'
+                }}
+              >
+                {c.categoryName}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Products Grid */}
         {loading ? (
           <div className="products-grid">
