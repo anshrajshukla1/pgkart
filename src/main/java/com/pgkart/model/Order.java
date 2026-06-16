@@ -56,4 +56,8 @@ public class Order {
     private Boolean shippedEmailSent = false;
 
     private Boolean deliveredEmailSent = false;
+
+    // Coupon tracking
+    private String appliedCouponCode;
+    private BigDecimal discountAmount;
 }

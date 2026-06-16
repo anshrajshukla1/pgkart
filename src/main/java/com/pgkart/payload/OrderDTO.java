@@ -22,4 +22,6 @@ public class OrderDTO {
     private String courierName;
     private String trackingUrl;
     private String returnStatus;
+    private String appliedCouponCode;
+    private BigDecimal discountAmount;
 }

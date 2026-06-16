@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet-async'
-import { fetchProducts } from '../../store/actions/index.js'
+import api from '../../api/api.js'
 import ProductCard from '../shared/ProductCard.jsx'
 
 const CATEGORIES = [
@@ -38,13 +38,23 @@ function SkeletonCard() {
 }
 
 export default function Home() {
-  const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { products, loading } = useSelector(state => state.products)
+  const [featuredProducts, setFeaturedProducts] = React.useState([])
+  const [loadingFeatured, setLoadingFeatured] = React.useState(true)
 
   useEffect(() => {
-    dispatch(fetchProducts({ pageSize: 8, sortBy: 'productId', sortOrder: 'desc' }))
-  }, [dispatch])
+    const fetchFeatured = async () => {
+      try {
+        const res = await api.get('/api/public/products/featured')
+        setFeaturedProducts(res.data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoadingFeatured(false)
+      }
+    }
+    fetchFeatured()
+  }, [])
 
   return (
     <div>
@@ -110,19 +120,19 @@ export default function Home() {
             <h2>Featured Products</h2>
             <p>Handpicked essentials loved by students</p>
           </div>
-          {loading ? (
+          {loadingFeatured ? (
             <div className="products-grid">
               {Array(8).fill(0).map((_, i) => <SkeletonCard key={i} />)}
             </div>
-          ) : products.length === 0 ? (
+          ) : featuredProducts.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-state-icon">📦</div>
-              <h3>No products yet</h3>
-              <p>Products will appear here once added by the admin.</p>
+              <div className="empty-state-icon">⭐</div>
+              <h3>No featured products</h3>
+              <p>Products marked as featured by admin will appear here.</p>
             </div>
           ) : (
             <div className="products-grid">
-              {products.map(p => <ProductCard key={p.productId} product={p} />)}
+              {featuredProducts.slice(0, 8).map(p => <ProductCard key={p.productId} product={p} />)}
             </div>
           )}
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>

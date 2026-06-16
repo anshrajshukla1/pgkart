@@ -51,6 +51,25 @@ export default function Checkout() {
   })
   const [placing, setPlacing] = useState(false)
   const [orderSuccess, setOrderSuccess] = useState(false)
+  const [couponCode, setCouponCode] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
+  const [validatingCoupon, setValidatingCoupon] = useState(false)
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode) return
+    setValidatingCoupon(true)
+    try {
+      const res = await api.get(`/api/public/coupons/validate?code=${couponCode}`)
+      setAppliedCoupon(res.data)
+      toast.success('Coupon applied successfully!')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Invalid or expired coupon')
+      setCouponCode('')
+      setAppliedCoupon(null)
+    } finally {
+      setValidatingCoupon(false)
+    }
+  }
 
   const handleAddrChange = e => setAddress(a => ({ ...a, [e.target.name]: e.target.value }))
 
@@ -118,7 +137,9 @@ export default function Checkout() {
               razorpayPaymentId: response.razorpay_payment_id,
               razorpayOrderId: response.razorpay_order_id,
               razorpaySignature: response.razorpay_signature,
-              addressId: savedAddress.addressId
+              addressId: savedAddress.addressId,
+              couponCode: appliedCoupon ? appliedCoupon.code : null,
+              discountAmount: discount
             })
             dispatch(fetchCart())
             setOrderSuccess(true)
@@ -160,7 +181,15 @@ export default function Checkout() {
 
   const subtotal = Number(totalPrice || 0)
   const shipping = 0 // subtotal > 499 ? 0 : 49
-  const grandTotal = subtotal + shipping
+  let discount = 0
+  if (appliedCoupon) {
+    if (appliedCoupon.discountType === 'PERCENTAGE') {
+      discount = subtotal * (appliedCoupon.discountValue / 100)
+    } else {
+      discount = appliedCoupon.discountValue
+    }
+  }
+  const grandTotal = Math.max(0, subtotal - discount + shipping)
 
   return (
     <div style={{
@@ -278,6 +307,33 @@ export default function Checkout() {
                 })}
               </div>
 
+              {/* Coupon Section */}
+              <div style={{
+                background: 'white', borderRadius: '16px', padding: '1.5rem',
+                border: '1.5px solid var(--gray-200)', marginBottom: '1rem'
+              }}>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1rem', marginBottom: '1rem' }}>
+                  🎟️ Have a Coupon?
+                </h3>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input className="form-control" placeholder="Enter code" value={couponCode} onChange={e => setCouponCode(e.target.value.toUpperCase())} disabled={appliedCoupon} />
+                  {!appliedCoupon ? (
+                    <button className="btn btn-outline" disabled={!couponCode || validatingCoupon} onClick={handleApplyCoupon}>
+                      {validatingCoupon ? '...' : 'Apply'}
+                    </button>
+                  ) : (
+                    <button className="btn btn-danger" onClick={() => { setAppliedCoupon(null); setCouponCode('') }}>
+                      Remove
+                    </button>
+                  )}
+                </div>
+                {appliedCoupon && (
+                  <div style={{ color: 'var(--success)', fontSize: '0.875rem', fontWeight: 600, marginTop: '0.5rem' }}>
+                    Coupon "{appliedCoupon.code}" applied!
+                  </div>
+                )}
+              </div>
+
               <button
                 className="btn btn-primary"
                 style={{ width: '100%', padding: '0.85rem' }}
@@ -350,6 +406,12 @@ export default function Checkout() {
               {shipping === 0 ? 'FREE' : `₹${shipping}`}
             </span>
           </div>
+          {appliedCoupon && (
+            <div className="summary-row" style={{ color: 'var(--success)', fontWeight: 600 }}>
+              <span>Discount ({appliedCoupon.code})</span>
+              <span>-₹{Math.round(discount)}</span>
+            </div>
+          )}
           <div className="summary-total">
             <span>Total</span>
             <span>₹{Math.round(grandTotal)}</span>

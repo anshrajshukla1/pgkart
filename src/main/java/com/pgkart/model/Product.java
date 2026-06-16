@@ -45,6 +45,8 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    private boolean isFeatured = false;
+
     @ToString.Exclude
     @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<CartItem> cartItems = new ArrayList<>();

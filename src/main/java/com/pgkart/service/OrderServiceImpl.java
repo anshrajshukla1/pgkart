@@ -39,7 +39,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderDTO placeOrder(String emailId, Long addressId, String paymentMethod,
-                               String pgName, String pgPaymentId, String pgStatus, String pgResponseMessage) {
+                               String pgName, String pgPaymentId, String pgStatus, String pgResponseMessage,
+                               String couponCode, BigDecimal discountAmount) {
         Cart cart = cartRepository.findCartByEmail(emailId);
         if (cart == null) {
             throw new ResourceNotFoundException("Cart", "email", emailId);
@@ -68,6 +69,8 @@ public class OrderServiceImpl implements OrderService {
         order.setConfirmationEmailSent(false);
         order.setShippedEmailSent(false);
         order.setDeliveredEmailSent(false);
+        order.setAppliedCouponCode(couponCode);
+        order.setDiscountAmount(discountAmount);
 
         Payment payment = new Payment(paymentMethod, pgName, pgPaymentId, pgStatus, pgResponseMessage);
         payment.setOrder(order);
@@ -109,6 +112,8 @@ public class OrderServiceImpl implements OrderService {
         if (savedOrder.getAddress() != null) {
             orderDTO.setAddress(modelMapper.map(savedOrder.getAddress(), com.pgkart.payload.AddressDTO.class));
         }
+        orderDTO.setAppliedCouponCode(savedOrder.getAppliedCouponCode());
+        orderDTO.setDiscountAmount(savedOrder.getDiscountAmount());
         orderItems.forEach(item -> orderDTO.getOrderItems().add(modelMapper.map(item, OrderItemDTO.class)));
 
         return orderDTO;
@@ -165,6 +170,8 @@ public class OrderServiceImpl implements OrderService {
                     dto.setCourierName(o.getCourierName());
                     dto.setTrackingUrl(o.getTrackingUrl());
                     dto.setReturnStatus(o.getReturnStatus());
+                    dto.setAppliedCouponCode(o.getAppliedCouponCode());
+                    dto.setDiscountAmount(o.getDiscountAmount());
                     dto.setOrderItems(o.getOrderItems().stream()
                             .map(item -> modelMapper.map(item, OrderItemDTO.class))
                             .collect(Collectors.toList()));

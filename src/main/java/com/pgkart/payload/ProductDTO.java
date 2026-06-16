@@ -23,4 +23,6 @@ public class ProductDTO {
     private Integer lowStockThreshold;
 
     private String categoryName;
+
+    private boolean isFeatured;
 }

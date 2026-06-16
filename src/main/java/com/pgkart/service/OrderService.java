@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface OrderService {
     OrderDTO placeOrder(String emailId, Long addressId, String paymentMethod,
-                        String pgName, String pgPaymentId, String pgStatus, String pgResponseMessage);
+                        String pgName, String pgPaymentId, String pgStatus, String pgResponseMessage,
+                        String couponCode, java.math.BigDecimal discountAmount);
     OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
     OrderDTO updateOrderTracking(Long orderId, OrderTrackingDTO trackingDTO);
     List<OrderDTO> getOrdersByEmail(String email);

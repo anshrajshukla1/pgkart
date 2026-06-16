@@ -59,6 +59,15 @@ public class ProductController {
         return ResponseEntity.ok(productService.searchProducts(keyword, pageNumber, pageSize, sortBy, sortOrder));
     }
 
+    @GetMapping("/public/products/featured")
+    public ResponseEntity<ProductResponse> getFeaturedProducts(
+            @RequestParam(defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
+            @RequestParam(defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy,
+            @RequestParam(defaultValue = AppConstants.SORT_DIR) String sortOrder) {
+        return ResponseEntity.ok(productService.getFeaturedProducts(pageNumber, pageSize, sortBy, sortOrder));
+    }
+
 
     // ─── ADMIN ENDPOINTS ──────────────────────────────────────────────────────
 

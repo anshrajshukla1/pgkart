@@ -27,4 +27,5 @@ public interface ProductService {
 
     List<ProductDTO> getLowStockProducts();
 
+    ProductResponse getFeaturedProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 }

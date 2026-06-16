@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { to: '/admin/products', icon: '📦', label: 'Products' },
   { to: '/admin/orders', icon: '🧾', label: 'Orders' },
   { to: '/admin/categories', icon: '🗂️', label: 'Categories' },
+  { to: '/admin/coupons', icon: '🎟️', label: 'Coupons' },
 ]
 
 export default function AdminLayout() {

@@ -92,6 +92,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductResponse getFeaturedProducts(Integer pageNumber, Integer pageSize,
+                                               String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Product> page = productRepository.findByIsFeaturedTrue(pageable);
+        return buildResponse(page);
+    }
+
+    @Override
     @Transactional
     public ProductDTO updateProduct(Long productId, ProductDTO productDTO) throws IOException {
         Product existing = productRepository.findById(productId)
@@ -118,6 +127,8 @@ public class ProductServiceImpl implements ProductService {
         if (productDTO.getLowStockThreshold() != null) {
             existing.setLowStockThreshold(productDTO.getLowStockThreshold());
         }
+        
+        existing.setFeatured(productDTO.isFeatured());
 
 
         Product saved = productRepository.save(existing);

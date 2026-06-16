@@ -22,6 +22,7 @@ const Dashboard = lazy(() => import('./components/admin/dashboard/Dashboard.jsx'
 const AdminProducts = lazy(() => import('./components/admin/products/AdminProducts.jsx'))
 const AdminOrders = lazy(() => import('./components/admin/orders/Orders.jsx'))
 const Category = lazy(() => import('./components/admin/categories/Category.jsx'))
+const AdminCoupons = lazy(() => import('./components/admin/coupons/AdminCoupons.jsx'))
 
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchCart } from './store/actions/index.js'
@@ -57,6 +58,7 @@ export default function App() {
             <Route path="products" element={<AdminProducts />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="categories" element={<Category />} />
+            <Route path="coupons" element={<AdminCoupons />} />
           </Route>
         </Routes>
       </Suspense>

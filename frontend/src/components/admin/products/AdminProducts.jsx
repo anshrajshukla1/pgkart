@@ -12,7 +12,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 const EMPTY_FORM = {
   productName: '', description: '', price: '', discount: '',
-  quantity: '', categoryId: ''
+  quantity: '', categoryId: '', isFeatured: false
 }
 
 export default function AdminProducts() {
@@ -56,7 +56,10 @@ export default function AdminProducts() {
     loadCategories()
   }, [page])
 
-  const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+  const handleChange = e => {
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
+    setForm(f => ({ ...f, [e.target.name]: value }))
+  }
 
   const handleEdit = (product) => {
     setForm({
@@ -65,7 +68,8 @@ export default function AdminProducts() {
       price: product.price || '',
       discount: product.discount || '',
       quantity: product.quantity || '',
-      categoryId: product.category?.categoryId || ''
+      categoryId: product.category?.categoryId || '',
+      isFeatured: product.isFeatured || false
     })
     setEditId(product.productId)
     setShowForm(true)
@@ -83,6 +87,7 @@ export default function AdminProducts() {
         price: Number(form.price),
         discount: Number(form.discount) || 0,
         quantity: Number(form.quantity),
+        isFeatured: Boolean(form.isFeatured)
       }
 
       let productId = editId
@@ -189,6 +194,13 @@ export default function AdminProducts() {
                 </select>
               </div>
               <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: '#F8FAFC', padding: '1rem', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
+                  <input type="checkbox" name="isFeatured" checked={form.isFeatured} onChange={handleChange} style={{ width: '1.25rem', height: '1.25rem', cursor: 'pointer' }} />
+                  <span style={{ fontWeight: 600 }}>⭐ Featured Product</span>
+                  <span style={{ color: 'var(--gray-500)', fontSize: '0.85rem' }}>(Show this product prominently on the Home Page)</span>
+                </label>
+              </div>
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                 <label className="form-label">Product Image</label>
                 <input
                   type="file"
@@ -244,6 +256,7 @@ export default function AdminProducts() {
                   <th>Discount</th>
                   <th>Stock</th>
                   <th>Category</th>
+                  <th>Featured</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
@@ -300,6 +313,9 @@ export default function AdminProducts() {
                       </td>
                       <td style={{ color: 'var(--gray-500)', fontSize: '0.8rem' }}>
                         {product.category?.categoryName || 'N/A'}
+                      </td>
+                      <td style={{ fontSize: '0.85rem' }}>
+                        {product.isFeatured ? '⭐ Yes' : '—'}
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
