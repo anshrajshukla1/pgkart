@@ -50,6 +50,7 @@ export default function Checkout() {
     pincode: '', mobileNumber: ''
   })
   const [placing, setPlacing] = useState(false)
+  const [orderSuccess, setOrderSuccess] = useState(false)
 
   const handleAddrChange = e => setAddress(a => ({ ...a, [e.target.name]: e.target.value }))
 
@@ -120,8 +121,7 @@ export default function Checkout() {
               addressId: savedAddress.addressId
             })
             dispatch(fetchCart())
-            toast.success('🎉 Order placed successfully!')
-            navigate('/orders')
+            setOrderSuccess(true)
           } catch (e) {
             console.error('Verify error:', e)
             toast.error('Payment verification failed. Contact support.')
@@ -356,6 +356,53 @@ export default function Checkout() {
           </div>
         </div>
       </div>
+
+      {/* Order Success Modal */}
+      {orderSuccess && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999, padding: '1rem'
+        }}>
+          <div style={{
+            background: 'white', borderRadius: '24px', padding: '2.5rem 2rem',
+            maxWidth: '450px', width: '100%', textAlign: 'center',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
+          }}>
+            <div style={{ fontSize: '4.5rem', marginBottom: '0.5rem', lineHeight: 1 }}>🎉</div>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, color: 'var(--gray-900)', fontSize: '1.75rem', marginBottom: '1.5rem' }}>
+              Order Placed Successfully!
+            </h2>
+            
+            <div style={{ background: '#FEF3C7', border: '1px solid #FDE68A', padding: '1rem', borderRadius: '12px', marginBottom: '2rem', textAlign: 'left' }}>
+              <p style={{ margin: 0, fontSize: '0.95rem', color: '#92400E', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>⚠️</span> Important Notice
+              </p>
+              <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: '#92400E', lineHeight: 1.6 }}>
+                Please check the <strong>Spam or Junk folder</strong> of your email for the order confirmation and future updates regarding your order.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <button 
+                onClick={() => navigate('/orders')}
+                className="btn btn-primary" style={{ padding: '0.85rem', width: '100%', fontSize: '1rem' }}
+              >
+                View My Orders
+              </button>
+              <button 
+                onClick={() => navigate('/products')}
+                style={{ padding: '0.85rem', width: '100%', background: 'transparent', border: '1px solid var(--gray-200)', color: 'var(--gray-700)', fontWeight: 600, cursor: 'pointer', fontSize: '1rem', borderRadius: '12px', transition: 'background 0.2s' }}
+                onMouseOver={(e) => e.currentTarget.style.background = 'var(--gray-50)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                Continue Shopping
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
