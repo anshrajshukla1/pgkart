@@ -24,5 +24,6 @@ public class ProductDTO {
 
     private String categoryName;
 
+    @JsonProperty("isFeatured")
     private boolean isFeatured;
 }
