@@ -58,7 +58,7 @@ export default function Footer() {
           borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem',
           justifyContent: 'center'
         }}>
-          {['🚀 Fast Delivery', '💳 Secure Payments', '↩️ Easy Returns', '🎓 10K+ Students'].map(pill => (
+          {['🚀 Fast Delivery', '💳 Secure Payments', '↩️ Easy Returns'].map(pill => (
             <span key={pill} style={{
               background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: '20px', padding: '0.35rem 0.9rem', fontSize: '0.75rem',
