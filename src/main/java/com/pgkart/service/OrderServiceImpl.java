@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import com.pgkart.repositories.CouponRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -35,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartService cartService;
     private final ModelMapper modelMapper;
     private final ProductRepository productRepository;
+    private final CouponRepository couponRepository;
 
     @Override
     @Transactional
@@ -69,6 +71,15 @@ public class OrderServiceImpl implements OrderService {
         order.setConfirmationEmailSent(false);
         order.setShippedEmailSent(false);
         order.setDeliveredEmailSent(false);
+        // Validate Coupon Minimum Order Value
+        if (couponCode != null && !couponCode.isBlank()) {
+            Coupon coupon = couponRepository.findByCode(couponCode)
+                    .orElseThrow(() -> new ApiException("Invalid coupon code"));
+            if (cart.getTotalPrice() == null || cart.getTotalPrice().compareTo(coupon.getMinOrderValue()) < 0) {
+                throw new ApiException("Minimum order value of ₹" + coupon.getMinOrderValue() + " is required to use coupon " + couponCode);
+            }
+        }
+
         order.setAppliedCouponCode(couponCode);
         order.setDiscountAmount(discountAmount);
 

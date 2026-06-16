@@ -14,5 +14,6 @@ public class CouponDTO {
     private String code;
     private String discountType;
     private BigDecimal discountValue;
+    private BigDecimal minOrderValue = BigDecimal.ZERO;
     private boolean isActive;
 }

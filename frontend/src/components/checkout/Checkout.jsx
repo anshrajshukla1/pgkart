@@ -60,7 +60,15 @@ export default function Checkout() {
     setValidatingCoupon(true)
     try {
       const res = await api.get(`/api/public/coupons/validate?code=${couponCode}`)
-      setAppliedCoupon(res.data)
+      const coupon = res.data
+      const currentSubtotal = Number(totalPrice || 0)
+      if (coupon.minOrderValue && currentSubtotal < coupon.minOrderValue) {
+        toast.error(`Minimum order value of ₹${coupon.minOrderValue} is required to use this coupon.`)
+        setCouponCode('')
+        setAppliedCoupon(null)
+        return
+      }
+      setAppliedCoupon(coupon)
       toast.success('Coupon applied successfully!')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid or expired coupon')

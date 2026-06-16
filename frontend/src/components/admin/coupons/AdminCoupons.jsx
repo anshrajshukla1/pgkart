@@ -6,6 +6,7 @@ const EMPTY_FORM = {
   code: '',
   discountType: 'PERCENTAGE',
   discountValue: '',
+  minOrderValue: '',
   active: true
 }
 
@@ -43,6 +44,7 @@ export default function AdminCoupons() {
         code: form.code.toUpperCase(),
         discountType: form.discountType,
         discountValue: Number(form.discountValue),
+        minOrderValue: Number(form.minOrderValue || 0),
         active: Boolean(form.active)
       }
       await api.post('/api/admin/coupons', payload)
@@ -99,9 +101,14 @@ export default function AdminCoupons() {
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">Discount Value *</label>
+                <label className="form-label">{form.discountType === 'PERCENTAGE' ? 'Discount Percentage (%) *' : 'Flat Discount Amount (₹) *'}</label>
                 <input className="form-control" type="number" name="discountValue" value={form.discountValue}
                   onChange={handleChange} placeholder="0" min={1} required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Minimum Order Value (₹) *</label>
+                <input className="form-control" type="number" name="minOrderValue" value={form.minOrderValue || ''}
+                  onChange={handleChange} placeholder="e.g. 500" min={0} required />
               </div>
               <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '0.75rem' }}>
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', margin: 0 }}>
@@ -159,6 +166,7 @@ export default function AdminCoupons() {
                     <td style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--gray-900)' }}>{c.code}</td>
                     <td style={{ fontWeight: 600 }}>
                       {c.discountType === 'PERCENTAGE' ? `${c.discountValue}% OFF` : `₹${c.discountValue} OFF`}
+                      <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)', fontWeight: 400 }}>Min: ₹{c.minOrderValue}</div>
                     </td>
                     <td>
                       <span style={{

@@ -1,0 +1,1 @@
+ALTER TABLE coupons ADD COLUMN min_order_value NUMERIC(38, 2) NOT NULL DEFAULT 0;

@@ -26,5 +26,8 @@ public class Coupon {
 
     private BigDecimal discountValue;
 
+    @Column(nullable = false)
+    private BigDecimal minOrderValue = BigDecimal.ZERO;
+
     private boolean isActive = true;
 }
