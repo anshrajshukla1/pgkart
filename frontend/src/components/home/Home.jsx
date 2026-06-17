@@ -475,43 +475,6 @@ export default function Home() {
           )}
         </div>
       </section>
-
-      {/* Promotional Banner Section */}
-      <section className="promo-banner">
-        <div className="promo-container">
-          <h2>Room Starter Bundles — Save Up To <span>35%</span></h2>
-          <p className="promo-subtext">Everything you need to set up your room in one curated pack. Free same-day shipping.</p>
-          <a href="#shop" onClick={handleScrollToShop} className="promo-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>
-            Shop Bundles
-          </a>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="section" style={{ background: 'linear-gradient(180deg, var(--color-bg) 0%, var(--color-white) 100%)', padding: '4.5rem 1.5rem' }}>
-        <div className="container">
-          <div className="section-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 700, letterSpacing: '-0.02em' }}>What Students Say</h2>
-            <p style={{ color: 'var(--color-muted)', fontSize: '14px', marginTop: '6px' }}>We understand room life better than anyone</p>
-          </div>
-          <div className="testimonials-grid">
-            {TESTIMONIALS.map((t, i) => (
-              <div key={i} className="testimonial-card">
-                <div className="testimonial-rating">
-                  {Array(t.stars).fill(0).map((_, starIdx) => (
-                    <FiStar key={starIdx} style={{ fill: 'var(--color-accent)', color: 'var(--color-accent)' }} />
-                  ))}
-                </div>
-                <p className="testimonial-quote">&ldquo;{t.quote}&rdquo;</p>
-                <div className="testimonial-author">
-                  <span className="testimonial-author-name">{t.author}</span>
-                  <span>{t.college}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

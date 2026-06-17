@@ -985,14 +985,14 @@ img {
 /* ============ CATEGORIES ============ */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
 }
 
 .category-card {
   background: var(--color-white);
   border-radius: 16px;
-  padding: 28px 16px 22px;
+  padding: 32px 16px 24px;
   text-align: center;
   cursor: pointer;
   border: 1.5px solid transparent;
@@ -1035,9 +1035,9 @@ img {
 }
 
 .category-icon-wrapper {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
   background: linear-gradient(145deg, rgba(13,91,99,0.06) 0%, rgba(255,180,138,0.08) 100%);
   display: flex;
   align-items: center;
@@ -1054,7 +1054,7 @@ img {
 }
 
 .category-icon {
-  font-size: 1.75rem;
+  font-size: 2.2rem;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   line-height: 1;
 }
@@ -1066,7 +1066,7 @@ img {
 .category-name {
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 14.5px;
+  font-size: 15px;
   color: var(--color-midnight);
   transition: color 0.3s ease;
   line-height: 1.35;
@@ -3149,10 +3149,10 @@ img {
     gap: 0.75rem;
   }
   .category-card {
-    padding: 1rem 0.5rem;
+    padding: 1.25rem 0.5rem;
   }
   .category-icon {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   .product-info {
     padding: 0.75rem;
@@ -3767,16 +3767,20 @@ html, body {
   /* Categories grid — 3-col on phones */
   .categories-grid {
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.5rem;
+    gap: 0.6rem;
   }
   .category-card {
-    padding: 0.6rem 0.3rem;
+    padding: 1rem 0.4rem;
+  }
+  .category-icon-wrapper {
+    width: 56px;
+    height: 56px;
   }
   .category-icon {
     font-size: 1.6rem;
   }
   .category-card span:last-child {
-    font-size: 0.65rem;
+    font-size: 0.72rem;
   }
 
   /* Trust bar */
