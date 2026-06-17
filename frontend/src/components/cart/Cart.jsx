@@ -118,9 +118,9 @@ export default function Cart() {
               <span>Subtotal ({products.length} items)</span>
               <span>₹{Number(totalPrice || 0).toFixed(0)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: Number(totalPrice || 0) >= 499 ? '#10B981' : '#6B7280' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: Number(totalPrice || 0) >= 199 ? '#10B981' : '#6B7280' }}>
               <span>🚚 Delivery</span>
-              <span style={{ fontWeight: 600 }}>{Number(totalPrice || 0) >= 499 ? 'FREE' : 'Calculated at checkout'}</span>
+              <span style={{ fontWeight: 600 }}>{Number(totalPrice || 0) >= 199 ? 'FREE' : 'Calculated at checkout'}</span>
             </div>
           </div>
 

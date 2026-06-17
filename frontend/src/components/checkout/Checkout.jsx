@@ -190,7 +190,7 @@ export default function Checkout() {
   }
 
   const subtotal = Number(totalPrice || 0)
-  let shipping = subtotal >= 499 ? 0 : 49
+  let shipping = subtotal >= 199 ? 0 : 49
   let discount = 0
 
   if (appliedCoupon) {
@@ -419,7 +419,7 @@ export default function Checkout() {
             <span>₹{Math.round(subtotal)}</span>
           </div>
           <div className="summary-row">
-            <span>Shipping {shipping === 0 && subtotal < 499 && '(Waived)'}</span>
+            <span>Shipping {shipping === 0 && subtotal < 199 && '(Waived)'}</span>
             <span style={{ color: shipping === 0 ? 'var(--success)' : 'inherit', fontWeight: 600 }}>
               {shipping === 0 ? 'FREE' : `₹${shipping}`}
             </span>
