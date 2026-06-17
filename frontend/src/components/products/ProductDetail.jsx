@@ -198,7 +198,7 @@ export default function ProductDetail() {
             </div>
             <div className="product-detail-highlight-item">
               <span className="product-detail-highlight-icon"><FiTruck /></span>
-              <span>Fast local delivery direct to your PG/hostel</span>
+              <span>Fast local delivery direct to your PG/room</span>
             </div>
             <div className="product-detail-highlight-item">
               <span className="product-detail-highlight-icon"><FiCheck /></span>

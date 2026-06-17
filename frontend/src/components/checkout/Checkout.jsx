@@ -132,7 +132,7 @@ export default function Checkout() {
         amount: rzpOrder.amount,
         currency: rzpOrder.currency || 'INR',
         name: 'PGKart',
-        description: 'Hostel Essentials Order',
+        description: 'Room Essentials Order',
         order_id: rzpOrder.razorpayOrderId,
         prefill: {
           name: auth?.user?.username || '',
@@ -417,7 +417,7 @@ export default function Checkout() {
                 <div 
                   className="payment-option-card"
                   style={{ opacity: 0.5, cursor: 'not-allowed' }}
-                  onClick={() => toast.error('Cash on Delivery is currently unavailable for hostel addresses')}
+                  onClick={() => toast.error('Cash on Delivery is currently unavailable for room addresses')}
                 >
                   <div className="payment-option-card-radio"></div>
                   <div className="payment-option-card-details">

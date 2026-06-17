@@ -81,7 +81,7 @@ export default function Products() {
   return (
     <div style={{ minHeight: 'calc(100vh - 72px)', padding: 'var(--space-2xl) var(--space-base)', background: 'var(--color-bg)' }}>
       <Helmet>
-        <title>Products - PGKart | Hostel Essentials</title>
+        <title>Products - PGKart | Room Essentials</title>
       </Helmet>
 
       <div className="container">

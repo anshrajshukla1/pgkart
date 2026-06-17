@@ -73,7 +73,7 @@ export default function Register() {
             <span className="auth-banner-logo">🎓</span>
             <h1 className="auth-banner-title">Join PGKart</h1>
             <p className="auth-banner-subtitle">
-              Set up your student account in seconds and unlock special discounts, hostels-only bulk deals, and swift room delivery.
+              Set up your student account in seconds and unlock special discounts, room-only bulk deals, and swift room delivery.
             </p>
             <div className="auth-banner-features">
               <div className="auth-feature-item">🔑 Quick registration and verification</div>

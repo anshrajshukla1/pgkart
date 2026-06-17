@@ -220,7 +220,7 @@ export default function OrderHistory() {
               }}>
                 {/* Order Header */}
                 <div style={{
-                  background: 'rgba(11,29,45,0.03)', padding: '1rem 1.5rem',
+                  background: 'rgba(11,29,45,0.03)', padding: 'var(--space-base)',
                   borderBottom: '1.5px solid var(--color-secondary)',
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem'
                 }}>

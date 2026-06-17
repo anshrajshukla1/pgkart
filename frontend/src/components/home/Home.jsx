@@ -182,8 +182,8 @@ export default function Home() {
   return (
     <div>
       <Helmet>
-        <title>PGKart - Hostel & PG Essentials | Fast Delivery</title>
-        <meta name="description" content="Shop hostel essentials online. Buckets, study lamps, toiletries, starter kits and more. Student-friendly prices with fast delivery." />
+        <title>PGKart - Room & PG Essentials | Fast Delivery</title>
+        <meta name="description" content="Shop room essentials online. Buckets, study lamps, toiletries, starter kits and more. Student-friendly prices with fast delivery." />
       </Helmet>
 
       {/* Hero Section */}
@@ -261,7 +261,7 @@ export default function Home() {
         <div className="container">
           <div className="section-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
             <h2 style={{ fontSize: '1.6rem', fontWeight: 700, letterSpacing: '-0.02em' }}>Shop by Category</h2>
-            <p style={{ color: 'var(--color-muted)', fontSize: '14px', marginTop: '6px' }}>Everything a hostel student needs, organized for you</p>
+            <p style={{ color: 'var(--color-muted)', fontSize: '14px', marginTop: '6px' }}>Everything a student needs, organized for you</p>
           </div>
           <div className="categories-grid">
             {categories.map(cat => (
@@ -479,7 +479,7 @@ export default function Home() {
       {/* Promotional Banner Section */}
       <section className="promo-banner">
         <div className="promo-container">
-          <h2>Hostel Starter Bundles — Save Up To <span>35%</span></h2>
+          <h2>Room Starter Bundles — Save Up To <span>35%</span></h2>
           <p className="promo-subtext">Everything you need to set up your room in one curated pack. Free same-day shipping.</p>
           <a href="#shop" onClick={handleScrollToShop} className="promo-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>
             Shop Bundles
@@ -492,7 +492,7 @@ export default function Home() {
         <div className="container">
           <div className="section-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
             <h2 style={{ fontSize: '1.6rem', fontWeight: 700, letterSpacing: '-0.02em' }}>What Students Say</h2>
-            <p style={{ color: 'var(--color-muted)', fontSize: '14px', marginTop: '6px' }}>We understand hostel life better than anyone</p>
+            <p style={{ color: 'var(--color-muted)', fontSize: '14px', marginTop: '6px' }}>We understand room life better than anyone</p>
           </div>
           <div className="testimonials-grid">
             {TESTIMONIALS.map((t, i) => (

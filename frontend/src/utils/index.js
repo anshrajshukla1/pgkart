@@ -5,7 +5,7 @@ export const bannerLists = [
   {
     id: 1,
     image: "/hero_graphic.png",
-    title: "Hostel Essentials",
+    title: "Room Essentials",
     subtitle: "Room Gear",
     description: "Upgrade your space with cozy and stylish essentials",
   },
@@ -42,7 +42,7 @@ export const bannerLists = [
     image: "/hero_graphic_6.png",
     title: "Electronics",
     subtitle: "Gadgets",
-    description: "Must-have gadgets for every hostel room",
+    description: "Must-have gadgets for every room",
   }
 ]
 

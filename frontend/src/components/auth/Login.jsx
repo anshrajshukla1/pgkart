@@ -52,11 +52,11 @@ export default function Login() {
             <span className="auth-banner-logo">🛒</span>
             <h1 className="auth-banner-title">PGKart</h1>
             <p className="auth-banner-subtitle">
-              Everything you need for your hostel life, curated with care and delivered right to your door.
+              Everything you need for your room life, curated with care and delivered right to your door.
             </p>
             <div className="auth-banner-features">
               <div className="auth-feature-item">⚡ Instant delivery to your room</div>
-              <div className="auth-feature-item">📦 Pre-approved hostel list items</div>
+              <div className="auth-feature-item">📦 Pre-approved room list items</div>
               <div className="auth-feature-item">🛡️ Safe, secure payments & refund assurance</div>
             </div>
           </div>
