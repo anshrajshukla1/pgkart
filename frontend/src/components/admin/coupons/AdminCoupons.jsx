@@ -43,7 +43,7 @@ export default function AdminCoupons() {
       const payload = {
         code: form.code.toUpperCase(),
         discountType: form.discountType,
-        discountValue: Number(form.discountValue),
+        discountValue: form.discountType === 'FREE_DELIVERY' ? 0 : Number(form.discountValue),
         minOrderValue: Number(form.minOrderValue || 0),
         active: Boolean(form.active)
       }
@@ -102,9 +102,12 @@ export default function AdminCoupons() {
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">{form.discountType === 'PERCENTAGE' ? 'Discount Percentage (%) *' : 'Flat Discount Amount (₹) *'}</label>
+                <label className="form-label">
+                  {form.discountType === 'PERCENTAGE' ? 'Discount Percentage (%) *' : 
+                   form.discountType === 'FLAT' ? 'Flat Discount Amount (₹) *' : 'Discount Value (Not Required)'}
+                </label>
                 <input className="form-control" type="number" name="discountValue" value={form.discountValue}
-                  onChange={handleChange} placeholder="0" min={1} required />
+                  onChange={handleChange} placeholder="0" min={form.discountType === 'FREE_DELIVERY' ? 0 : 1} required={form.discountType !== 'FREE_DELIVERY'} disabled={form.discountType === 'FREE_DELIVERY'} />
               </div>
               <div className="form-group">
                 <label className="form-label">Minimum Order Value (₹) *</label>
