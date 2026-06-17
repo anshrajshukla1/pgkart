@@ -1,28 +1,49 @@
 import { LuBoxes, LuHouse, LuLayoutGrid, LuShoppingCart, LuStore } from "react-icons/lu";
 import { bannerImageOne, bannerImageThree, bannerImageTwo } from "./constant";
 
-export const bannerLists =[
-    {
+export const bannerLists = [
+  {
     id: 1,
-    image: bannerImageThree,
-    title: "Home Comfort",
-    subtitle: "Living Room",
-    description: "Upgrade your space with cozy and stylish sofas",
+    image: "/hero_graphic.png",
+    title: "Hostel Essentials",
+    subtitle: "Room Gear",
+    description: "Upgrade your space with cozy and stylish essentials",
   },
   {
     id: 2,
-    image: bannerImageTwo,
-    title: "Entertainment Hub",
-    subtitle: "Smart TV",
-    description: "Experience the latest in home entertainment",
+    image: "/hero_graphic_2.png",
+    title: "Study Hub",
+    subtitle: "Stationery",
+    description: "Everything you need for your late-night study sessions",
   },
   {
     id: 3,
-    image: bannerImageOne,
-    title: "Playful Picks",
-    subtitle: "Kids' Clothing",
-    description: "Bright and fun styles for kids, up to 20% off",
-}
+    image: "/hero_graphic_3.png",
+    title: "Snack Time",
+    subtitle: "Munchies",
+    description: "Keep your cravings at bay with our snack collection",
+  },
+  {
+    id: 4,
+    image: "/hero_graphic_4.png",
+    title: "Laundry Day",
+    subtitle: "Cleaning",
+    description: "Tackle your laundry pile with our top picks",
+  },
+  {
+    id: 5,
+    image: "/hero_graphic_5.png",
+    title: "Personal Care",
+    subtitle: "Grooming",
+    description: "Stay fresh and clean with our grooming kits",
+  },
+  {
+    id: 6,
+    image: "/hero_graphic_6.png",
+    title: "Electronics",
+    subtitle: "Gadgets",
+    description: "Must-have gadgets for every hostel room",
+  }
 ]
 
 export const adminNavigation = [
