@@ -126,8 +126,8 @@ export default function AdminProducts() {
       await dispatch(adminDeleteProduct(id))
       toast.success(`"${name}" deleted`)
       loadProducts(page)
-    } catch {
-      toast.error('Failed to delete product')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete product')
     }
   }
 
