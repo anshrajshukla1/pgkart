@@ -1337,11 +1337,13 @@ img {
   cursor: pointer;
 }
 
-.product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px -8px rgba(13, 91, 99, 0.12),
-              0 8px 16px -4px rgba(11, 29, 45, 0.06);
-  border-color: rgba(13, 91, 99, 0.12);
+@media (hover: hover) {
+  .product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -8px rgba(13, 91, 99, 0.12),
+                0 8px 16px -4px rgba(11, 29, 45, 0.06);
+    border-color: rgba(13, 91, 99, 0.12);
+  }
 }
 
 .product-image-container {
@@ -1359,8 +1361,10 @@ img {
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.product-card:hover .product-image-container img {
-  transform: scale(1.06);
+@media (hover: hover) {
+  .product-card:hover .product-image-container img {
+    transform: scale(1.06);
+  }
 }
 
 .product-card-discount-badge {
@@ -1402,16 +1406,18 @@ img {
   transform: scale(0.85);
 }
 
-.product-card:hover .product-card-wishlist-btn {
-  opacity: 1;
-  transform: scale(1);
-}
+@media (hover: hover) {
+  .product-card:hover .product-card-wishlist-btn {
+    opacity: 1;
+    transform: scale(1);
+  }
 
-.product-card-wishlist-btn:hover {
-  color: #E11D48;
-  background: var(--color-white);
-  transform: scale(1.12) !important;
-  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15);
+  .product-card-wishlist-btn:hover {
+    color: #E11D48;
+    background: var(--color-white);
+    transform: scale(1.12) !important;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15);
+  }
 }
 
 .product-card-body {
@@ -1505,10 +1511,12 @@ img {
   letter-spacing: 0.01em;
 }
 
-.product-card-add-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(13, 91, 99, 0.25);
+@media (hover: hover) {
+  .product-card-add-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(13, 91, 99, 0.25);
+  }
 }
 
 .product-card-add-btn:active:not(:disabled) {
@@ -3600,6 +3608,8 @@ html, body {
     width: 28px;
     height: 28px;
     font-size: 0.8rem;
+    opacity: 1;
+    transform: scale(1);
   }
 
   /* Product detail — single column improvements */
