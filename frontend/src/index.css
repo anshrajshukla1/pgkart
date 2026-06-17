@@ -115,8 +115,10 @@ img {
 
 /* ============ NAVBAR ============ */
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  width: 100%;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(18px) saturate(1.4);
@@ -128,6 +130,11 @@ img {
   align-items: center;
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Spacer to push content below fixed navbar */
+.navbar + * {
+  margin-top: 78px;
 }
 
 .navbar-inner {
@@ -3061,6 +3068,9 @@ img {
   .navbar {
     padding: 0 var(--space-sm);
     height: 60px;
+  }
+  .navbar + * {
+    margin-top: 60px;
   }
   .navbar-brand img {
     height: 40px;
