@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../../store/actions/index.js'
-import { FiHeart, FiShoppingCart, FiStar } from 'react-icons/fi'
+import { FiHeart, FiShoppingCart } from 'react-icons/fi'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -26,6 +26,7 @@ export default function ProductCard({ product }) {
     : null
 
   const handleAddToCart = (e) => {
+    e.preventDefault()
     e.stopPropagation()
     if (!auth?.user) {
       navigate('/login')
@@ -35,9 +36,6 @@ export default function ProductCard({ product }) {
   }
 
   const categoryName = category?.categoryName || 'Essentials'
-  // Mock rating/review details for UI representation as none exists in database model
-  const mockStars = 5
-  const mockReviewCount = 12
 
   return (
     <div className="product-card" onClick={() => navigate(`/products/${productId}`)}>
@@ -95,6 +93,7 @@ export default function ProductCard({ product }) {
           className="product-card-add-btn"
           disabled={isOutOfStock}
           onClick={handleAddToCart}
+          style={{ position: 'relative', zIndex: 10 }}
         >
           <FiShoppingCart />
           <span>{isOutOfStock ? 'Out of Stock' : 'Add to Cart'}</span>

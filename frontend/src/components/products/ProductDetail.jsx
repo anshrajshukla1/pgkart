@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async'
 import { addToCart } from '../../store/actions/index.js'
 import api from '../../api/api.js'
 import Loader from '../shared/Loader.jsx'
-import { FiStar, FiShoppingCart, FiZap, FiTruck, FiShield, FiCheck } from 'react-icons/fi'
+import { FiShoppingCart, FiZap, FiTruck, FiShield, FiCheck } from 'react-icons/fi'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -66,8 +66,6 @@ export default function ProductDetail() {
   const categoryName = category?.categoryName || 'Essentials'
   // Mock thumbnails based on the main image for UI completeness
   const thumbnails = imageUrl ? [imageUrl, imageUrl, imageUrl] : []
-  const mockStars = 5
-  const mockReviewCount = 12
 
   return (
     <div className="product-detail-page">
