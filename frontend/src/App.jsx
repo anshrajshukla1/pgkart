@@ -40,8 +40,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Suspense fallback={<Loader />}>
-        <Routes>
-          {/* Public pages with Navbar + Footer */}
+        <div className="app-container">
+          <Routes>
+            {/* Public pages with Navbar + Footer */}
           <Route path="/" element={<><Navbar /><main><Home /></main><Footer /></>} />
           <Route path="/products" element={<><Navbar /><main><Products /></main><Footer /></>} />
           <Route path="/products/:id" element={<><Navbar /><main><ProductDetail /></main><Footer /></>} />
@@ -62,7 +63,8 @@ export default function App() {
             <Route path="categories" element={<Category />} />
             <Route path="coupons" element={<AdminCoupons />} />
           </Route>
-        </Routes>
+          </Routes>
+        </div>
       </Suspense>
     </BrowserRouter>
   )
