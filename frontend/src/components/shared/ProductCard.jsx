@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../../store/actions/index.js'
@@ -25,14 +25,18 @@ export default function ProductCard({ product }) {
     ? (image.startsWith('http') ? image : `${BASE_URL}/images/products/${image}`)
     : null
 
-  const handleAddToCart = (e) => {
+  const [adding, setAdding] = useState(false)
+
+  const handleAddToCart = async (e) => {
     e.preventDefault()
     e.stopPropagation()
     if (!auth?.user) {
       navigate('/login')
       return
     }
-    dispatch(addToCart(productId, 1))
+    setAdding(true)
+    await dispatch(addToCart(productId, 1))
+    setAdding(false)
   }
 
   const categoryName = category?.categoryName || 'Essentials'
@@ -91,12 +95,18 @@ export default function ProductCard({ product }) {
 
         <button
           className="product-card-add-btn"
-          disabled={isOutOfStock}
+          disabled={isOutOfStock || adding}
           onClick={handleAddToCart}
           style={{ position: 'relative', zIndex: 10 }}
         >
-          <FiShoppingCart />
-          <span>{isOutOfStock ? 'Out of Stock' : 'Add to Cart'}</span>
+          {adding ? (
+            <span style={{ fontSize: '11px', fontWeight: 700 }}>Adding...</span>
+          ) : (
+            <>
+              <FiShoppingCart />
+              <span className="default-text">{isOutOfStock ? 'Out of Stock' : 'Add to Cart'}</span>
+            </>
+          )}
         </button>
       </div>
     </div>
