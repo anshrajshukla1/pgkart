@@ -83,14 +83,6 @@ export default function ProductCard({ product }) {
           {productName}
         </div>
 
-        <div className="product-card-rating">
-          <div style={{ display: 'flex', gap: '2px' }}>
-            {Array(mockStars).fill(0).map((_, i) => (
-              <FiStar key={i} style={{ fill: 'var(--color-accent)', color: 'var(--color-accent)', fontSize: '0.8rem' }} />
-            ))}
-          </div>
-          <span className="product-card-rating-count">({mockReviewCount})</span>
-        </div>
 
         <div className="product-card-price-row">
           <span className="product-card-sale-price">₹{Math.round(displayPrice)}</span>

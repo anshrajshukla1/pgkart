@@ -126,17 +126,6 @@ export default function ProductDetail() {
           </span>
           <h1 className="product-detail-title">{productName}</h1>
 
-          {/* Stars & Reviews */}
-          <div className="product-detail-rating-row">
-            <div className="product-detail-stars">
-              {Array(mockStars).fill(0).map((_, i) => (
-                <FiStar key={i} style={{ fill: 'var(--color-accent)', color: 'var(--color-accent)' }} />
-              ))}
-            </div>
-            <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-muted)' }}>
-              ({mockReviewCount} student reviews)
-            </span>
-          </div>
 
           {/* Price & Stock badges */}
           <div className="product-detail-price-row">
