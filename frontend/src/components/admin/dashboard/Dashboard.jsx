@@ -70,14 +70,14 @@ export default function Dashboard() {
       {/* Stats */}
       <div className="stats-grid">
         {[
-          { icon: '🧾', label: 'Total Orders', value: stats.orders, color: '#4F46E5' },
-          { icon: '💰', label: 'Revenue (7 days)', value: `₹${(stats.revenue || 0).toLocaleString('en-IN')}`, color: '#10B981' },
-          { icon: '📦', label: 'Products Listed', value: stats.products, color: '#F59E0B' }
+          { icon: '🧾', label: 'Total Orders', value: stats.orders, color: 'var(--color-primary)' },
+          { icon: '💰', label: 'Revenue (7 days)', value: `₹${(stats.revenue || 0).toLocaleString('en-IN')}`, color: 'var(--color-success)' },
+          { icon: '📦', label: 'Products Listed', value: stats.products, color: 'var(--color-warning)' }
         ].map(s => (
-          <div key={s.label} className="stat-card">
-            <div className="stat-icon" style={{ color: s.color }}>{s.icon}</div>
-            <div className="stat-value" style={{ color: s.color }}>{loading ? '—' : s.value}</div>
-            <div className="stat-label">{s.label}</div>
+          <div key={s.label} className="stat-card" style={{ borderLeft: `4px solid ${s.color}` }}>
+            <div className="stat-icon" style={{ color: s.color, fontSize: '1.5rem', marginBottom: 'var(--space-xs)' }}>{s.icon}</div>
+            <div className="stat-value" style={{ color: 'var(--color-midnight)', fontSize: 'var(--font-size-2xl)' }}>{loading ? '—' : s.value}</div>
+            <div className="stat-label" style={{ color: 'var(--color-muted)', fontSize: 'var(--font-size-xs)', fontWeight: 600 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -85,12 +85,12 @@ export default function Dashboard() {
 
       {/* Recent Orders */}
       <div style={{
-        background: 'white', borderRadius: '20px', padding: '1.5rem',
-        border: '1.5px solid var(--gray-200)', boxShadow: 'var(--shadow)'
+        background: 'var(--color-white)', borderRadius: 'var(--radius-large)', padding: 'var(--space-xl)',
+        border: '1.5px solid var(--color-secondary)', boxShadow: 'var(--shadow-resting)'
       }}>
         <h2 style={{
           fontFamily: 'var(--font-heading)', fontWeight: 700,
-          fontSize: '1.1rem', marginBottom: '1.25rem', color: 'var(--gray-900)'
+          fontSize: 'var(--font-size-base)', marginBottom: 'var(--space-base)', color: 'var(--color-midnight)', marginTop: 0
         }}>
           🧾 Recent Orders
         </h2>
@@ -119,15 +119,15 @@ export default function Dashboard() {
             <tbody>
               {recentOrders.map(order => (
                 <tr key={order.orderId}>
-                  <td style={{ fontWeight: 600, color: 'var(--primary)' }}>#{order.orderId}</td>
+                  <td style={{ fontWeight: 600, color: 'var(--color-primary)' }}>#{order.orderId}</td>
                   <td>{order.email || 'N/A'}</td>
-                  <td style={{ fontWeight: 700 }}>₹{Math.round(order.totalAmount || 0)}</td>
+                  <td style={{ fontWeight: 700, color: 'var(--color-midnight)' }}>₹{Math.round(order.totalAmount || 0)}</td>
                   <td>
                     <span className={`status-badge ${STATUS_CLASS[order.orderStatus] || 'status-pending'}`}>
                       {order.orderStatus}
                     </span>
                   </td>
-                  <td style={{ color: 'var(--gray-400)' }}>
+                  <td style={{ color: 'var(--color-muted)' }}>
                     {order.orderDate ? new Date(order.orderDate).toLocaleDateString('en-IN') : 'N/A'}
                   </td>
                 </tr>

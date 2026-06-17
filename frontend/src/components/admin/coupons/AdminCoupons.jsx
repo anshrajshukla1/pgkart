@@ -71,63 +71,63 @@ export default function AdminCoupons() {
   }
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', fontWeight: 800, color: 'var(--gray-900)' }}>
-          🎟️ Coupons
+    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 var(--space-base)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-lg)' }}>
+        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--font-size-2xl)', fontWeight: 700, color: 'var(--color-midnight)', margin: 0 }}>
+          🎟️ Coupon Management
         </h1>
-        <button className="btn btn-primary" onClick={() => { setForm(EMPTY_FORM); setShowForm(true) }}>
+        <button className="btn btn-primary" onClick={() => { setForm(EMPTY_FORM); setShowForm(true) }} style={{ borderRadius: 'var(--radius-pill)' }}>
           + New Coupon
         </button>
       </div>
 
       {showForm && (
-        <div style={{ background: 'white', borderRadius: '20px', padding: '2rem', border: '1.5px solid var(--gray-200)', marginBottom: '2rem' }}>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: '1.5rem', fontSize: '1.1rem' }}>
+        <div style={{ background: 'var(--color-white)', borderRadius: 'var(--radius-large)', padding: 'var(--space-xl)', border: '1.5px solid var(--color-secondary)', marginBottom: 'var(--space-lg)', boxShadow: 'var(--shadow-resting)' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: 'var(--space-base)', fontSize: 'var(--font-size-base)', color: 'var(--color-midnight)', marginTop: 0 }}>
             🎟️ Create Coupon
           </h2>
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="address-grid" style={{ marginBottom: 'var(--space-base)' }}>
               <div className="form-group">
-                <label className="form-label">Coupon Code *</label>
+                <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>Coupon Code *</label>
                 <input className="form-control" name="code" value={form.code}
-                  onChange={handleChange} placeholder="e.g. SUMMER50" style={{ textTransform: 'uppercase' }} required />
+                  onChange={handleChange} placeholder="e.g. SUMMER50" style={{ textTransform: 'uppercase', borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} required />
               </div>
               <div className="form-group">
-                <label className="form-label">Discount Type *</label>
-                <select className="form-control" name="discountType" value={form.discountType} onChange={handleChange} required>
+                <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>Discount Type *</label>
+                <select className="form-control" name="discountType" value={form.discountType} onChange={handleChange} style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} required>
                   <option value="PERCENTAGE">Percentage (%)</option>
                   <option value="FLAT">Flat Amount (₹)</option>
                   <option value="FREE_DELIVERY">Free Delivery</option>
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">
+                <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>
                   {form.discountType === 'PERCENTAGE' ? 'Discount Percentage (%) *' : 
                    form.discountType === 'FLAT' ? 'Flat Discount Amount (₹) *' : 'Discount Value (Not Required)'}
                 </label>
                 <input className="form-control" type="number" name="discountValue" value={form.discountValue}
-                  onChange={handleChange} placeholder="0" min={form.discountType === 'FREE_DELIVERY' ? 0 : 1} required={form.discountType !== 'FREE_DELIVERY'} disabled={form.discountType === 'FREE_DELIVERY'} />
+                  onChange={handleChange} placeholder="0" min={form.discountType === 'FREE_DELIVERY' ? 0 : 1} style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} required={form.discountType !== 'FREE_DELIVERY'} disabled={form.discountType === 'FREE_DELIVERY'} />
               </div>
               <div className="form-group">
-                <label className="form-label">
+                <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>
                   {form.discountType === 'FREE_DELIVERY' ? 'Minimum Order Value (Not Required)' : 'Minimum Order Value (₹) *'}
                 </label>
                 <input className="form-control" type="number" name="minOrderValue" value={form.minOrderValue || ''}
-                  onChange={handleChange} placeholder="e.g. 500" min={0} required={form.discountType !== 'FREE_DELIVERY'} disabled={form.discountType === 'FREE_DELIVERY'} />
+                  onChange={handleChange} placeholder="e.g. 500" min={0} style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} required={form.discountType !== 'FREE_DELIVERY'} disabled={form.discountType === 'FREE_DELIVERY'} />
               </div>
-              <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '0.75rem' }}>
-                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', margin: 0 }}>
-                  <input type="checkbox" name="active" checked={form.active} onChange={handleChange} style={{ width: '1.25rem', height: '1.25rem', cursor: 'pointer' }} />
+              <div className="form-group" style={{ display: 'flex', alignItems: 'center', paddingTop: 'var(--space-base)' }}>
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', cursor: 'pointer', margin: 0, color: 'var(--color-midnight)' }}>
+                  <input type="checkbox" name="active" checked={form.active} onChange={handleChange} style={{ width: '1.25rem', height: '1.25rem', cursor: 'pointer', accentColor: 'var(--color-primary)' }} />
                   <span style={{ fontWeight: 600 }}>Is Active?</span>
                 </label>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
-              <button type="submit" className="btn btn-primary" disabled={saving}>
+            <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+              <button type="submit" className="btn btn-primary" style={{ borderRadius: 'var(--radius-pill)', padding: '0.65rem 1.5rem' }} disabled={saving}>
                 {saving ? '⏳ Saving...' : '+ Create Coupon'}
               </button>
-              <button type="button" className="btn btn-outline"
+              <button type="button" className="btn btn-outline" style={{ borderRadius: 'var(--radius-pill)', padding: '0.65rem 1.5rem', borderColor: 'var(--color-secondary)' }}
                 onClick={() => { setShowForm(false); setForm(EMPTY_FORM) }}>
                 Cancel
               </button>
@@ -136,15 +136,12 @@ export default function AdminCoupons() {
         </div>
       )}
 
-      {/* Coupons Table */}
-      <div style={{
-        background: 'white', borderRadius: '20px', overflow: 'hidden',
-        border: '1.5px solid var(--gray-200)', boxShadow: 'var(--shadow)'
-      }}>
+      {/* Coupons cards grid */}
+      <div>
         {loading ? (
-          <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-base)' }}>
             {Array(4).fill(0).map((_, i) => (
-              <div key={i} className="skeleton" style={{ height: '56px', borderRadius: '8px' }} />
+              <div key={i} className="skeleton" style={{ height: '180px', borderRadius: 'var(--radius-medium)' }} />
             ))}
           </div>
         ) : coupons.length === 0 ? (
@@ -154,46 +151,87 @@ export default function AdminCoupons() {
             <p>Create your first discount coupon using the button above.</p>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Code</th>
-                  <th>Discount</th>
-                  <th>Status</th>
-                  <th style={{ textAlign: 'right' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {coupons.map(c => (
-                  <tr key={c.id}>
-                    <td style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>#{c.id}</td>
-                    <td style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--gray-900)' }}>{c.code}</td>
-                    <td style={{ fontWeight: 600 }}>
-                      {c.discountType === 'PERCENTAGE' ? `${c.discountValue}% OFF` : `₹${c.discountValue} OFF`}
-                      <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)', fontWeight: 400 }}>Min: ₹{c.minOrderValue}</div>
-                    </td>
-                    <td>
-                      <span style={{
-                        background: c.active ? '#D1FAE5' : '#FEE2E2',
-                        color: c.active ? '#065F46' : '#991B1B',
-                        borderRadius: '20px', padding: '0.2rem 0.6rem',
-                        fontSize: '0.75rem', fontWeight: 700
-                      }}>
-                        {c.active ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                        <button className="btn btn-danger" style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
-                          onClick={() => handleDelete(c.id, c.code)}>🗑️</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-base)' }}>
+            {coupons.map(c => (
+              <div 
+                key={c.id} 
+                style={{
+                  background: 'var(--color-white)',
+                  border: '2px dashed var(--color-primary)',
+                  borderRadius: 'var(--radius-medium)',
+                  padding: 'var(--space-lg)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--space-md)',
+                  position: 'relative',
+                  boxShadow: 'var(--shadow-resting)',
+                  overflow: 'hidden'
+                }}
+              >
+                {/* Status tag */}
+                <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
+                  <span style={{
+                    background: c.active ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
+                    color: c.active ? 'var(--color-success)' : 'var(--color-error)',
+                    borderRadius: 'var(--radius-pill)', padding: '0.2rem 0.6rem',
+                    fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase'
+                  }}>
+                    {c.active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                  <span style={{ fontSize: '2rem' }}>🎟️</span>
+                  <div>
+                    {/* Monospace Code Badge */}
+                    <div style={{
+                      fontFamily: 'monospace',
+                      background: 'rgba(13, 91, 99, 0.1)',
+                      color: 'var(--color-primary)',
+                      padding: '0.25rem 0.65rem',
+                      borderRadius: 'var(--radius-small)',
+                      fontWeight: 700,
+                      fontSize: 'var(--font-size-base)',
+                      display: 'inline-block',
+                      letterSpacing: '0.5px'
+                    }}>
+                      {c.code}
+                    </div>
+                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-muted)', marginTop: '2px' }}>
+                      ID: #{c.id}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ borderTop: '1px dashed var(--color-secondary)', paddingTop: 'var(--space-sm)' }}>
+                  <div style={{ fontSize: 'var(--font-size-lg)', fontWeight: 700, color: 'var(--color-midnight)' }}>
+                    {c.discountType === 'PERCENTAGE' ? `${c.discountValue}% OFF` : `₹${c.discountValue} OFF`}
+                  </div>
+                  <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-muted)', marginTop: '2px' }}>
+                    Min. spend required: <strong>₹{c.minOrderValue}</strong>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'auto' }}>
+                  <button 
+                    className="btn" 
+                    style={{ 
+                      background: 'var(--color-error-bg)', 
+                      color: 'var(--color-error)', 
+                      border: 'none', 
+                      borderRadius: 'var(--radius-pill)', 
+                      padding: '0.45rem 1rem', 
+                      fontSize: 'var(--font-size-xs)', 
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => handleDelete(c.id, c.code)}
+                  >
+                    🗑️ Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

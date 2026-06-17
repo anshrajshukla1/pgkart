@@ -51,7 +51,6 @@ export default function Checkout() {
   })
   const [placing, setPlacing] = useState(false)
   const [orderSuccess, setOrderSuccess] = useState(false)
-  const [paymentFailed, setPaymentFailed] = useState(false)
   const [couponCode, setCouponCode] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState(null)
   const [validatingCoupon, setValidatingCoupon] = useState(false)
@@ -168,7 +167,7 @@ export default function Checkout() {
       const rzp = new window.Razorpay(options)
       rzp.on('payment.failed', (resp) => {
         console.error('Razorpay payment failed:', resp.error)
-        setPaymentFailed(true)
+        toast.error('Payment failed: ' + (resp.error?.description || 'Unknown error'))
         setPlacing(false)
       })
       rzp.open()
@@ -206,15 +205,19 @@ export default function Checkout() {
   const grandTotal = Math.max(0, subtotal - discount + shipping)
 
   return (
-    <div style={{
-      minHeight: 'calc(100vh - 64px)', padding: '2rem 1.5rem',
-      maxWidth: '900px', margin: '0 auto'
+    <div className="container" style={{
+      padding: 'var(--space-2xl) var(--space-base)',
+      maxWidth: '1000px',
+      margin: '0 auto'
     }}>
       <Helmet><title>Checkout - PGKart</title></Helmet>
 
       <h1 style={{
-        fontFamily: 'var(--font-heading)', fontSize: '1.75rem', fontWeight: 800,
-        color: 'var(--gray-900)', marginBottom: '2rem'
+        fontSize: 'var(--font-size-2xl)',
+        fontWeight: 700,
+        color: 'var(--color-midnight)',
+        marginBottom: 'var(--space-xl)',
+        fontFamily: 'var(--font-heading)'
       }}>Checkout</h1>
 
       <StepIndicator current={step} />
@@ -224,47 +227,62 @@ export default function Checkout() {
         <div>
           {/* Step 0: Address */}
           {step === 0 && (
-            <div style={{ background: 'white', borderRadius: '20px', padding: '2rem', border: '1.5px solid var(--gray-200)' }}>
-              <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: '1.5rem', fontSize: '1.2rem' }}>
-                📍 Delivery Address
+            <div style={{
+              background: 'var(--color-white)',
+              borderRadius: 'var(--radius-large)',
+              padding: 'var(--space-xl)',
+              border: '1.5px solid var(--color-secondary)',
+              boxShadow: 'var(--shadow-resting)'
+            }}>
+              <h2 style={{
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 700,
+                marginBottom: 'var(--space-lg)',
+                fontSize: 'var(--font-size-lg)',
+                color: 'var(--color-midnight)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--space-sm)'
+              }}>
+                <span>📍</span> Delivery Address
               </h2>
-              <div className="address-grid">
+              <div className="address-grid" style={{ marginBottom: 'var(--space-base)' }}>
                 <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                  <label className="form-label">Street Address</label>
+                  <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>Street Address</label>
                   <input className="form-control" name="street" value={address.street}
-                    onChange={handleAddrChange} placeholder="Room no., Building, Street" />
+                    onChange={handleAddrChange} placeholder="Room no., Building, Street" style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">City</label>
+                  <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>City</label>
                   <input className="form-control" name="city" value={address.city}
-                    onChange={handleAddrChange} placeholder="City" />
+                    onChange={handleAddrChange} placeholder="City" style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">State</label>
-                  <select className="form-control" name="state" value={address.state} onChange={handleAddrChange}>
+                  <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>State</label>
+                  <select className="form-control" name="state" value={address.state} onChange={handleAddrChange} style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }}>
                     <option value="">Select State</option>
                     {INDIA_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">PIN Code</label>
+                  <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>PIN Code</label>
                   <input className="form-control" name="pincode" value={address.pincode}
-                    onChange={handleAddrChange} placeholder="6-digit PIN" maxLength={6} />
+                    onChange={handleAddrChange} placeholder="6-digit PIN" maxLength={6} style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Mobile Number</label>
+                  <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>Mobile Number</label>
                   <input className="form-control" name="mobileNumber" value={address.mobileNumber}
-                    onChange={handleAddrChange} placeholder="10-digit mobile" maxLength={10} />
+                    onChange={handleAddrChange} placeholder="10-digit mobile" maxLength={10} style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Country</label>
+                  <label className="form-label" style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>Country</label>
                   <input className="form-control" name="country" value={address.country}
-                    onChange={handleAddrChange} placeholder="Country" />
+                    onChange={handleAddrChange} placeholder="Country" style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} />
                 </div>
               </div>
               <button
                 className="btn btn-primary"
-                style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
+                style={{ width: '100%', padding: '0.85rem', marginTop: 'var(--space-md)', borderRadius: 'var(--radius-pill)' }}
                 onClick={() => { if (validateAddress()) setStep(1) }}
               >
                 Continue to Review →
@@ -274,20 +292,23 @@ export default function Checkout() {
 
           {/* Step 1: Review */}
           {step === 1 && (
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-base)' }}>
               {/* Address Summary */}
               <div style={{
-                background: 'white', borderRadius: '16px', padding: '1.5rem',
-                border: '1.5px solid var(--gray-200)', marginBottom: '1rem'
+                background: 'var(--color-white)',
+                borderRadius: 'var(--radius-medium)',
+                padding: 'var(--space-lg)',
+                border: '1.5px solid var(--color-secondary)',
+                boxShadow: 'var(--shadow-resting)'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1rem' }}>📍 Delivery Address</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 'var(--font-size-base)', color: 'var(--color-midnight)', margin: 0 }}>📍 Delivery Address</h3>
                   <button onClick={() => setStep(0)}
-                    style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem' }}>
+                    style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>
                     Edit
                   </button>
                 </div>
-                <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', lineHeight: 1.6 }}>
+                <p style={{ color: 'var(--color-muted)', fontSize: 'var(--font-size-sm)', lineHeight: 1.6, margin: 0 }}>
                   {address.street}, {address.city}, {address.state} - {address.pincode}<br />
                   📱 {address.mobileNumber}
                 </p>
@@ -295,10 +316,13 @@ export default function Checkout() {
 
               {/* Items */}
               <div style={{
-                background: 'white', borderRadius: '16px', padding: '1.5rem',
-                border: '1.5px solid var(--gray-200)', marginBottom: '1rem'
+                background: 'var(--color-white)',
+                borderRadius: 'var(--radius-medium)',
+                padding: 'var(--space-lg)',
+                border: '1.5px solid var(--color-secondary)',
+                boxShadow: 'var(--shadow-resting)'
               }}>
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1rem', marginBottom: '1rem' }}>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 'var(--font-size-base)', color: 'var(--color-midnight)', marginBottom: 'var(--space-base)' }}>
                   🛒 Order Items ({products.length})
                 </h3>
                 {products.map(item => {
@@ -307,13 +331,13 @@ export default function Checkout() {
                   return (
                     <div key={item.productId} style={{
                       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                      padding: '0.6rem 0', borderBottom: '1px solid var(--gray-100)'
+                      padding: '0.75rem 0', borderBottom: '1px solid var(--color-bg)'
                     }}>
                       <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--gray-800)' }}>{item.productName}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>Qty: {qty}</div>
+                        <div style={{ fontWeight: 600, fontSize: 'var(--font-size-sm)', color: 'var(--color-midnight)' }}>{item.productName}</div>
+                        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-muted)' }}>Qty: {qty}</div>
                       </div>
-                      <div style={{ fontWeight: 700, color: 'var(--primary)' }}>
+                      <div style={{ fontWeight: 700, color: 'var(--color-primary)' }}>
                         ₹{Math.round(price * qty)}
                       </div>
                     </div>
@@ -323,26 +347,29 @@ export default function Checkout() {
 
               {/* Coupon Section */}
               <div style={{
-                background: 'white', borderRadius: '16px', padding: '1.5rem',
-                border: '1.5px solid var(--gray-200)', marginBottom: '1rem'
+                background: 'var(--color-white)',
+                borderRadius: 'var(--radius-medium)',
+                padding: 'var(--space-lg)',
+                border: '1.5px solid var(--color-secondary)',
+                boxShadow: 'var(--shadow-resting)'
               }}>
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1rem', marginBottom: '1rem' }}>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 'var(--font-size-base)', color: 'var(--color-midnight)', marginBottom: 'var(--space-base)' }}>
                   🎟️ Have a Coupon?
                 </h3>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input className="form-control" placeholder="Enter code" value={couponCode} onChange={e => setCouponCode(e.target.value.toUpperCase())} disabled={appliedCoupon} />
+                <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+                  <input className="form-control" placeholder="Enter code" value={couponCode} onChange={e => setCouponCode(e.target.value.toUpperCase())} disabled={appliedCoupon} style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }} />
                   {!appliedCoupon ? (
-                    <button className="btn btn-outline" disabled={!couponCode || validatingCoupon} onClick={handleApplyCoupon}>
+                    <button className="btn btn-outline" disabled={!couponCode || validatingCoupon} onClick={handleApplyCoupon} style={{ borderRadius: 'var(--radius-pill)', borderColor: 'var(--color-primary)', color: 'var(--color-primary)', padding: '0.5rem 1.5rem' }}>
                       {validatingCoupon ? '...' : 'Apply'}
                     </button>
                   ) : (
-                    <button className="btn btn-danger" onClick={() => { setAppliedCoupon(null); setCouponCode('') }}>
+                    <button className="btn" style={{ backgroundColor: 'var(--color-error)', color: 'white', borderRadius: 'var(--radius-pill)', padding: '0.5rem 1.5rem', border: 'none' }} onClick={() => { setAppliedCoupon(null); setCouponCode('') }}>
                       Remove
                     </button>
                   )}
                 </div>
                 {appliedCoupon && (
-                  <div style={{ color: 'var(--success)', fontSize: '0.875rem', fontWeight: 600, marginTop: '0.5rem' }}>
+                  <div style={{ color: 'var(--color-success)', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginTop: 'var(--space-sm)' }}>
                     Coupon "{appliedCoupon.code}" applied!
                   </div>
                 )}
@@ -350,7 +377,7 @@ export default function Checkout() {
 
               <button
                 className="btn btn-primary"
-                style={{ width: '100%', padding: '0.85rem' }}
+                style={{ width: '100%', padding: '0.85rem', borderRadius: 'var(--radius-pill)', marginTop: 'var(--space-sm)' }}
                 onClick={() => setStep(2)}
               >
                 Continue to Payment →
@@ -361,35 +388,48 @@ export default function Checkout() {
           {/* Step 2: Payment */}
           {step === 2 && (
             <div style={{
-              background: 'white', borderRadius: '20px', padding: '2rem',
-              border: '1.5px solid var(--gray-200)', textAlign: 'center'
+              background: 'var(--color-white)',
+              borderRadius: 'var(--radius-large)',
+              padding: 'var(--space-xl)',
+              border: '1.5px solid var(--color-secondary)',
+              textAlign: 'center',
+              boxShadow: 'var(--shadow-resting)'
             }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💳</div>
-              <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, marginBottom: '0.5rem' }}>
-                Secure Payment
+              <div style={{ fontSize: '3rem', marginBottom: 'var(--space-md)' }}>💳</div>
+              <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 'var(--font-size-lg)', color: 'var(--color-midnight)', marginBottom: 'var(--space-xs)' }}>
+                Select Payment Method
               </h2>
-              <p style={{ color: 'var(--gray-500)', marginBottom: '2rem', fontSize: '0.9rem' }}>
-                Pay safely via Razorpay. Supports UPI, cards, and netbanking.
+              <p style={{ color: 'var(--color-muted)', marginBottom: 'var(--space-lg)', fontSize: 'var(--font-size-sm)' }}>
+                All payments are securely processed and encrypted.
               </p>
 
-              <div style={{
-                background: '#EEF2FF', borderRadius: '12px', padding: '1.25rem',
-                marginBottom: '2rem', border: '1px solid #C7D2FE'
-              }}>
-                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  {['💳 Cards', '📱 UPI', '🏦 Netbanking'].map(m => (
-                    <span key={m} style={{
-                      background: 'white', borderRadius: '8px', padding: '0.4rem 0.9rem',
-                      fontSize: '0.8rem', fontWeight: 600, color: 'var(--primary)',
-                      border: '1px solid #C7D2FE'
-                    }}>{m}</span>
-                  ))}
+              <div style={{ marginBottom: 'var(--space-lg)' }}>
+                {/* Razorpay Option */}
+                <div className="payment-option-card selected">
+                  <div className="payment-option-card-radio"></div>
+                  <div className="payment-option-card-details">
+                    <span className="payment-option-card-title">Razorpay Secure Checkout</span>
+                    <span className="payment-option-card-desc">UPI, Google Pay, Cards, Netbanking</span>
+                  </div>
+                </div>
+
+                {/* COD Option */}
+                <div 
+                  className="payment-option-card"
+                  style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                  onClick={() => toast.error('Cash on Delivery is currently unavailable for hostel addresses')}
+                >
+                  <div className="payment-option-card-radio"></div>
+                  <div className="payment-option-card-details">
+                    <span className="payment-option-card-title">Cash on Delivery (COD)</span>
+                    <span className="payment-option-card-desc">Temporarily unavailable for this address</span>
+                  </div>
                 </div>
               </div>
 
               <button
                 className="btn btn-primary"
-                style={{ width: '100%', padding: '0.95rem', fontSize: '1.05rem' }}
+                style={{ width: '100%', padding: '0.95rem', fontSize: 'var(--font-size-base)', borderRadius: 'var(--radius-pill)' }}
                 disabled={placing}
                 onClick={handlePlaceOrder}
               >
@@ -401,38 +441,34 @@ export default function Checkout() {
 
         {/* Order Summary Sidebar */}
         <div className="order-summary-card">
-          <h3>Order Summary</h3>
+          <h3 style={{ borderBottom: '1px solid var(--color-bg)', paddingBottom: 'var(--space-sm)' }}>Order Summary</h3>
           {products.map(item => {
             const qty = Number(item.quantity || 1)
             const price = Number(item.specialPrice || item.price || 0)
             return (
-              <div key={item.productId} className="summary-row" style={{ fontSize: '0.8rem' }}>
-                <span style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div key={item.productId} className="summary-row" style={{ fontSize: 'var(--font-size-sm)' }}>
+                <span style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--color-midnight)' }}>
                   {item.productName} ×{qty}
                 </span>
-                <span>₹{Math.round(price * qty)}</span>
+                <span style={{ fontWeight: 500, color: 'var(--color-midnight)' }}>₹{Math.round(price * qty)}</span>
               </div>
             )
           })}
-          <div className="summary-row">
-            <span>Subtotal</span>
-            <span>₹{Math.round(subtotal)}</span>
-          </div>
-          <div className="summary-row">
-            <span>Shipping {shipping === 0 && subtotal < 199 && '(Waived)'}</span>
-            <span style={{ color: shipping === 0 ? 'var(--success)' : 'inherit', fontWeight: 600 }}>
+          <div className="summary-row" style={{ fontSize: 'var(--font-size-sm)' }}>
+            <span style={{ color: 'var(--color-muted)' }}>Shipping {shipping === 0 && subtotal < 199 && '(Waived)'}</span>
+            <span style={{ color: shipping === 0 ? 'var(--color-success)' : 'inherit', fontWeight: 600 }}>
               {shipping === 0 ? 'FREE' : `₹${shipping}`}
             </span>
           </div>
-          {appliedCoupon && discount > 0 && (
-            <div className="summary-row" style={{ color: 'var(--success)', fontWeight: 600 }}>
+          {appliedCoupon && (
+            <div className="summary-row" style={{ color: 'var(--color-success)', fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>
               <span>Discount ({appliedCoupon.code})</span>
               <span>-₹{Math.round(discount)}</span>
             </div>
           )}
-          <div className="summary-row total-row" style={{ borderTop: '1px solid var(--gray-200)', marginTop: '0.5rem', paddingTop: '0.5rem' }}>
+          <div className="summary-total" style={{ borderTop: '2px solid var(--color-bg)', paddingTop: 'var(--space-md)', marginTop: 'var(--space-sm)' }}>
             <span>Total</span>
-            <span>₹{Math.round(grandTotal)}</span>
+            <span style={{ color: 'var(--color-primary)' }}>₹{Math.round(grandTotal)}</span>
           </div>
         </div>
       </div>
@@ -441,25 +477,25 @@ export default function Checkout() {
       {orderSuccess && (
         <div style={{
           position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+          background: 'rgba(11,29,45,0.4)', backdropFilter: 'blur(6px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           zIndex: 9999, padding: '1rem'
         }}>
           <div style={{
-            background: 'white', borderRadius: '24px', padding: '2.5rem 2rem',
+            background: 'var(--color-white)', borderRadius: 'var(--radius-large)', padding: '2.5rem 2rem',
             maxWidth: '450px', width: '100%', textAlign: 'center',
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
+            boxShadow: 'var(--shadow-floating)', border: '1.5px solid var(--color-secondary)'
           }}>
             <div style={{ fontSize: '4.5rem', marginBottom: '0.5rem', lineHeight: 1 }}>🎉</div>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, color: 'var(--gray-900)', fontSize: '1.75rem', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, color: 'var(--color-midnight)', fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-lg)' }}>
               Order Placed Successfully!
             </h2>
             
-            <div style={{ background: '#FEF3C7', border: '1px solid #FDE68A', padding: '1rem', borderRadius: '12px', marginBottom: '2rem', textAlign: 'left' }}>
-              <p style={{ margin: 0, fontSize: '0.95rem', color: '#92400E', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ background: 'var(--color-warning-bg)', border: '1px solid var(--color-warning)', padding: '1.25rem', borderRadius: 'var(--radius-medium)', marginBottom: '2rem', textAlign: 'left' }}>
+              <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-warning)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span style={{ fontSize: '1.2rem' }}>⚠️</span> Important Notice
               </p>
-              <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: '#92400E', lineHeight: 1.6 }}>
+              <p style={{ margin: '0.5rem 0 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-warning)', lineHeight: 1.6 }}>
                 Please check the <strong>Spam or Junk folder</strong> of your email for the order confirmation and future updates regarding your order.
               </p>
             </div>
@@ -467,15 +503,21 @@ export default function Checkout() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <button 
                 onClick={() => navigate('/orders')}
-                className="btn btn-primary" style={{ padding: '0.85rem', width: '100%', fontSize: '1rem' }}
+                className="btn btn-primary" style={{ padding: '0.85rem', width: '100%', fontSize: '1rem', borderRadius: 'var(--radius-pill)' }}
               >
                 View My Orders
               </button>
               <button 
                 onClick={() => navigate('/products')}
-                style={{ padding: '0.85rem', width: '100%', background: 'transparent', border: '1px solid var(--gray-200)', color: 'var(--gray-700)', fontWeight: 600, cursor: 'pointer', fontSize: '1rem', borderRadius: '12px', transition: 'background 0.2s' }}
-                onMouseOver={(e) => e.currentTarget.style.background = 'var(--gray-50)'}
-                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                style={{ padding: '0.85rem', width: '100%', background: 'transparent', border: '1.5px solid var(--color-secondary)', color: 'var(--color-midnight)', fontWeight: 600, cursor: 'pointer', fontSize: '1rem', borderRadius: 'var(--radius-pill)', transition: 'all 0.2s' }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(13, 91, 99, 0.05)'
+                  e.currentTarget.style.borderColor = 'var(--color-primary)'
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.borderColor = 'var(--color-secondary)'
+                }}
               >
                 Continue Shopping
               </button>

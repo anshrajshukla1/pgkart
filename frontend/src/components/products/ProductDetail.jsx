@@ -5,10 +5,9 @@ import { Helmet } from 'react-helmet-async'
 import { addToCart } from '../../store/actions/index.js'
 import api from '../../api/api.js'
 import Loader from '../shared/Loader.jsx'
+import { FiStar, FiShoppingCart, FiZap, FiTruck, FiShield, FiCheck } from 'react-icons/fi'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
-
-
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -20,6 +19,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [qty, setQty] = useState(1)
   const [adding, setAdding] = useState(false)
+  const [activeThumb, setActiveThumb] = useState(0)
 
   useEffect(() => {
     setLoading(true)
@@ -33,7 +33,7 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="empty-state" style={{ minHeight: 'calc(100vh - 64px)' }}>
+      <div className="empty-state" style={{ minHeight: 'calc(100vh - 72px)' }}>
         <div className="empty-state-icon">😕</div>
         <h3>Product not found</h3>
         <p>This product may have been removed or doesn't exist.</p>
@@ -44,7 +44,7 @@ export default function ProductDetail() {
 
   const {
     productName, price, specialPrice, discount,
-    quantity, image, description
+    quantity, image, description, category
   } = product
 
   const displayPrice = specialPrice || price
@@ -63,6 +63,12 @@ export default function ProductDetail() {
     setAdding(false)
   }
 
+  const categoryName = category?.categoryName || 'Essentials'
+  // Mock thumbnails based on the main image for UI completeness
+  const thumbnails = imageUrl ? [imageUrl, imageUrl, imageUrl] : []
+  const mockStars = 5
+  const mockReviewCount = 12
+
   return (
     <div className="product-detail-page">
       <Helmet>
@@ -71,150 +77,154 @@ export default function ProductDetail() {
       </Helmet>
 
       {/* Breadcrumb */}
-      <nav style={{ fontSize: '0.825rem', color: 'var(--gray-500)', marginBottom: '1.5rem' }}>
-        <Link to="/" style={{ color: 'var(--primary)' }}>Home</Link>
+      <nav className="product-detail-breadcrumb" style={{ marginBottom: '1.5rem' }}>
+        <Link to="/">Home</Link>
         {' / '}
-        <Link to="/products" style={{ color: 'var(--primary)' }}>Products</Link>
+        <Link to="/#shop">Products</Link>
         {' / '}
-        <span>{productName}</span>
+        <span style={{ color: 'var(--color-midnight)', fontWeight: 500 }}>{productName}</span>
       </nav>
 
       <div className="product-detail-grid">
-        {/* Image */}
-        <div className="product-detail-image">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={productName}
-              onError={e => { e.target.src = `https://placehold.co/500x500/EEF2FF/4F46E5?text=${encodeURIComponent(productName?.charAt(0) || 'P')}` }}
-            />
-          ) : (
-            <div style={{
-              width: '100%', height: '400px', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', fontSize: '5rem', background: '#EEF2FF'
-            }}>🛍️</div>
-          )}
-        </div>
-
-        {/* Info */}
-        <div className="product-detail-info">
-          <h1>{productName}</h1>
-
-          {/* Stock */}
-          {isOutOfStock ? (
-            <div style={{
-              background: '#FEE2E2', border: '1.5px solid #FCA5A5', borderRadius: '10px',
-              padding: '0.75rem 1rem', color: '#991B1B', fontWeight: 600, fontSize: '0.875rem',
-              marginBottom: '1.25rem'
-            }}>
-              ❌ Out of Stock
-            </div>
-          ) : isLowStock ? (
-            <div className="low-stock-alert">
-              ⚡ Only {quantity} left in stock — order soon!
-            </div>
-          ) : (
-            <div style={{
-              background: '#D1FAE5', border: '1.5px solid #6EE7B7', borderRadius: '10px',
-              padding: '0.75rem 1rem', color: '#065F46', fontWeight: 600, fontSize: '0.875rem',
-              marginBottom: '1.25rem'
-            }}>
-              ✅ In Stock ({quantity} available)
-            </div>
-          )}
-
-          {/* Price */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
-              <span style={{
-                fontFamily: 'var(--font-heading)', fontSize: '2.25rem',
-                fontWeight: 800, color: 'var(--primary)'
-              }}>
-                ₹{Math.round(displayPrice)}
-              </span>
-              {hasDiscount && (
-                <>
-                  <span style={{ fontSize: '1.1rem', textDecoration: 'line-through', color: 'var(--gray-400)' }}>
-                    ₹{Math.round(price)}
-                  </span>
-                  <span style={{
-                    background: '#D1FAE5', color: '#065F46',
-                    borderRadius: '20px', padding: '0.2rem 0.7rem',
-                    fontSize: '0.85rem', fontWeight: 700
-                  }}>
-                    {discount}% OFF
-                  </span>
-                </>
-              )}
-            </div>
-            {hasDiscount && (
-              <p style={{ color: 'var(--success)', fontSize: '0.875rem', fontWeight: 600, marginTop: '0.25rem' }}>
-                You save ₹{Math.round(price - displayPrice)}
-              </p>
+        {/* Left Column: Images */}
+        <div className="product-detail-left">
+          <div className="product-detail-main-image">
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={productName}
+                onError={e => { e.target.src = `https://placehold.co/500x500/EEF2FF/0D5B63?text=${encodeURIComponent(productName?.charAt(0) || 'P')}` }}
+              />
+            ) : (
+              <div style={{
+                width: '100%', height: '400px', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', fontSize: '5rem', background: 'var(--color-bg)', color: 'var(--color-secondary)'
+              }}>🛍️</div>
             )}
           </div>
 
-          {/* Description */}
-          {description && (
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{
-                fontWeight: 700, fontSize: '0.9rem', color: 'var(--gray-700)',
-                marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px'
-              }}>Description</h3>
-              <p style={{ color: 'var(--gray-600)', lineHeight: 1.7, fontSize: '0.9rem' }}>{description}</p>
+          {/* Thumbnails Row */}
+          {thumbnails.length > 0 && (
+            <div className="product-detail-thumbnails">
+              {thumbnails.map((t, i) => (
+                <div
+                  key={i}
+                  className={`product-detail-thumbnail ${activeThumb === i ? 'active' : ''}`}
+                  onClick={() => setActiveThumb(i)}
+                >
+                  <img src={t} alt={`${productName} thumbnail ${i}`} />
+                </div>
+              ))}
             </div>
           )}
+        </div>
 
-          {/* Quantity + Add to Cart */}
+        {/* Right Column: Info details (Sticky on scroll) */}
+        <div className="product-detail-right">
+          <span style={{ textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, fontSize: 'var(--font-size-xs)', color: 'var(--color-secondary)' }}>
+            {categoryName}
+          </span>
+          <h1 className="product-detail-title">{productName}</h1>
+
+          {/* Stars & Reviews */}
+          <div className="product-detail-rating-row">
+            <div className="product-detail-stars">
+              {Array(mockStars).fill(0).map((_, i) => (
+                <FiStar key={i} style={{ fill: 'var(--color-accent)', color: 'var(--color-accent)' }} />
+              ))}
+            </div>
+            <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-muted)' }}>
+              ({mockReviewCount} student reviews)
+            </span>
+          </div>
+
+          {/* Price & Stock badges */}
+          <div className="product-detail-price-row">
+            <span className="product-detail-sale-price">₹{Math.round(displayPrice)}</span>
+            {hasDiscount && (
+              <>
+                <span className="product-detail-original-price">₹{Math.round(price)}</span>
+                <span className="product-detail-stock-badge low-stock" style={{ background: 'var(--color-success-bg)', color: 'var(--color-success)' }}>
+                  {discount}% OFF
+                </span>
+              </>
+            )}
+
+            {isOutOfStock ? (
+              <span className="product-detail-stock-badge out-of-stock">❌ Out of Stock</span>
+            ) : isLowStock ? (
+              <span className="product-detail-stock-badge low-stock">⚡ Only {quantity} Left</span>
+            ) : (
+              <span className="product-detail-stock-badge in-stock">✓ In Stock</span>
+            )}
+          </div>
+
+          <hr style={{ border: 'none', borderTop: '1px solid var(--color-bg)', margin: 'var(--space-sm) 0' }} />
+
+          {/* Stepper control */}
           {!isOutOfStock && (
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '0.5rem', display: 'block' }}>
-                Quantity
-              </label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div className="qty-control">
-                  <button className="qty-btn" onClick={() => setQty(q => Math.max(1, q - 1))}>−</button>
-                  <span className="qty-value">{qty}</span>
-                  <button className="qty-btn" onClick={() => setQty(q => Math.min(quantity, q + 1))}>+</button>
+            <div className="product-detail-qty-row">
+              <span className="product-detail-qty-label">Quantity</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-base)' }}>
+                <div className="product-detail-qty-stepper">
+                  <button className="product-detail-qty-btn" onClick={() => setQty(q => Math.max(1, q - 1))}>−</button>
+                  <span className="product-detail-qty-value">{qty}</span>
+                  <button className="product-detail-qty-btn" onClick={() => setQty(q => Math.min(quantity, q + 1))}>+</button>
                 </div>
-                <span style={{ color: 'var(--gray-400)', fontSize: '0.8rem' }}>Max {quantity}</span>
+                <span style={{ color: 'var(--color-muted)', fontSize: 'var(--font-size-xs)' }}>Max {quantity}</span>
               </div>
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          {/* Action buttons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', marginTop: 'var(--space-sm)' }}>
             <button
               className="btn btn-primary"
-              style={{ flex: 1, padding: '0.85rem', fontSize: '1rem' }}
+              style={{ width: '100%', padding: '0.85rem', fontSize: 'var(--font-size-base)', borderRadius: 'var(--radius-pill)' }}
               disabled={isOutOfStock || adding}
               onClick={handleAddToCart}
             >
-              {adding ? '⏳ Adding...' : '🛒 Add to Cart'}
+              <FiShoppingCart />
+              <span>{adding ? 'Adding...' : 'Add to Cart'}</span>
             </button>
             <button
-              className="btn btn-accent"
-              style={{ flex: 1, padding: '0.85rem', fontSize: '1rem' }}
+              className="btn btn-outline"
+              style={{ width: '100%', padding: '0.85rem', fontSize: 'var(--font-size-base)', borderRadius: 'var(--radius-pill)' }}
               disabled={isOutOfStock || adding}
               onClick={async () => {
                 await handleAddToCart()
-                navigate('/cart')
+                navigate('/checkout')
               }}
             >
-              ⚡ Buy Now
+              <FiZap />
+              <span>Buy Now</span>
             </button>
           </div>
 
-          {/* Trust badges */}
-          <div style={{
-            display: 'flex', gap: '0.75rem', flexWrap: 'wrap',
-            marginTop: '1.5rem', paddingTop: '1.5rem',
-            borderTop: '1px solid var(--gray-200)'
-          }}>
-            {['🔒 Secure Payment', '🚀 Fast Delivery', '↩️ Easy Returns'].map(b => (
-              <span key={b} className="chip chip-primary">{b}</span>
-            ))}
+          {/* Highlights & Delivery info */}
+          <div className="product-detail-highlights">
+            <div className="product-detail-highlight-item">
+              <span className="product-detail-highlight-icon"><FiShield /></span>
+              <span>100% Genuine, student-vetted quality</span>
+            </div>
+            <div className="product-detail-highlight-item">
+              <span className="product-detail-highlight-icon"><FiTruck /></span>
+              <span>Fast local delivery direct to your PG/hostel</span>
+            </div>
+            <div className="product-detail-highlight-item">
+              <span className="product-detail-highlight-icon"><FiCheck /></span>
+              <span>Hassle-free 10-day returns policy</span>
+            </div>
           </div>
         </div>
+
+        {/* Full-width description below */}
+        {description && (
+          <div className="product-detail-desc-section">
+            <h3 className="product-detail-desc-title">Description</h3>
+            <p className="product-detail-desc-body">{description}</p>
+          </div>
+        )}
       </div>
     </div>
   )

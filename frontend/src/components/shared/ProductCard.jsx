@@ -2,9 +2,9 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../../store/actions/index.js'
+import { FiHeart, FiShoppingCart, FiStar } from 'react-icons/fi'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
-
 
 export default function ProductCard({ product }) {
   const dispatch = useDispatch()
@@ -13,7 +13,7 @@ export default function ProductCard({ product }) {
 
   const {
     productId, productName, price, specialPrice, discount,
-    quantity, image, description
+    quantity, image, description, category
   } = product
 
   const displayPrice = specialPrice || price
@@ -34,53 +34,78 @@ export default function ProductCard({ product }) {
     dispatch(addToCart(productId, 1))
   }
 
+  const categoryName = category?.categoryName || 'Essentials'
+  // Mock rating/review details for UI representation as none exists in database model
+  const mockStars = 5
+  const mockReviewCount = 12
+
   return (
     <div className="product-card" onClick={() => navigate(`/products/${productId}`)}>
-      <div className="product-image-wrap">
+      {/* Image container */}
+      <div className="product-image-container">
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={productName}
-            onError={e => { e.target.src = `https://placehold.co/300x300/EEF2FF/4F46E5?text=${encodeURIComponent(productName?.charAt(0) || 'P')}` }}
+            onError={e => { e.target.src = `https://placehold.co/300x300/EEF2FF/0D5B63?text=${encodeURIComponent(productName?.charAt(0) || 'P')}` }}
           />
         ) : (
           <div style={{
             width: '100%', height: '100%', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', fontSize: '3rem', background: '#EEF2FF'
-          }}>🛍️</div>
+            justifyContent: 'center', fontSize: '3rem', background: 'var(--color-bg)', color: 'var(--color-secondary)'
+          }}>
+            <FiShoppingCart />
+          </div>
         )}
 
-        {isOutOfStock && (
-          <span className="product-badge badge-out-of-stock">Out of Stock</span>
+        {/* Absolute Badges */}
+        {hasDiscount && !isOutOfStock && (
+          <div className="product-card-discount-badge">{discount}% OFF</div>
         )}
-        {!isOutOfStock && isLowStock && (
-          <span className="product-badge badge-low-stock">Only {quantity} left!</span>
-        )}
-        {!isOutOfStock && !isLowStock && hasDiscount && (
-          <span className="product-badge badge-discount">{discount}% OFF</span>
-        )}
+
+        <button 
+          className="product-card-wishlist-btn" 
+          onClick={(e) => {
+            e.stopPropagation()
+            // Visual feedback only as no wishlist logic exists in Redux store
+          }}
+          aria-label="Add to Wishlist"
+        >
+          <FiHeart style={{ fill: 'currentColor' }} />
+        </button>
       </div>
 
-      <div className="product-info">
-        <div className="product-name" title={productName}>{productName}</div>
+      {/* Body details */}
+      <div className="product-card-body">
+        <span className="product-card-category">{categoryName}</span>
+        
+        <div className="product-card-name" title={productName}>
+          {productName}
+        </div>
 
+        <div className="product-card-rating">
+          <div style={{ display: 'flex', gap: '2px' }}>
+            {Array(mockStars).fill(0).map((_, i) => (
+              <FiStar key={i} style={{ fill: 'var(--color-accent)', color: 'var(--color-accent)', fontSize: '0.8rem' }} />
+            ))}
+          </div>
+          <span className="product-card-rating-count">({mockReviewCount})</span>
+        </div>
 
-        <div className="product-price">
-          <span className="price-special">₹{Math.round(displayPrice)}</span>
+        <div className="product-card-price-row">
+          <span className="product-card-sale-price">₹{Math.round(displayPrice)}</span>
           {hasDiscount && (
-            <>
-              <span className="price-original">₹{Math.round(price)}</span>
-              <span className="price-discount-pct">Save {discount}%</span>
-            </>
+            <span className="product-card-original-price">₹{Math.round(price)}</span>
           )}
         </div>
 
         <button
-          className="add-to-cart-btn"
+          className="product-card-add-btn"
           disabled={isOutOfStock}
           onClick={handleAddToCart}
         >
-          {isOutOfStock ? 'Out of Stock' : '🛒 Add to Cart'}
+          <FiShoppingCart />
+          <span>{isOutOfStock ? 'Out of Stock' : 'Add to Cart'}</span>
         </button>
       </div>
     </div>

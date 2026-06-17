@@ -16,12 +16,16 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           position="top-right"
           toastOptions={{
             style: {
-              fontFamily: 'Inter, sans-serif',
-              borderRadius: '10px',
-              fontSize: '0.875rem',
+              fontFamily: 'var(--font-body)',
+              borderRadius: 'var(--radius-medium)',
+              fontSize: 'var(--font-size-sm)',
+              background: 'var(--color-white)',
+              color: 'var(--color-midnight)',
+              border: '1.5px solid var(--color-secondary)',
+              boxShadow: 'var(--shadow-floating)',
             },
-            success: { iconTheme: { primary: '#10B981', secondary: 'white' } },
-            error: { iconTheme: { primary: '#EF4444', secondary: 'white' } },
+            success: { iconTheme: { primary: '#2E7D32', secondary: 'white' } },
+            error: { iconTheme: { primary: '#C62828', secondary: 'white' } },
           }}
         />
       </HelmetProvider>

@@ -39,12 +39,26 @@ export default function ResetPassword() {
   if (!token) {
     return (
       <div className="auth-page">
-        <div className="auth-card" style={{ textAlign: 'center' }}>
-          <h2>Invalid Link 🚫</h2>
-          <p style={{ color: 'var(--gray-500)', marginTop: '1rem' }}>This password reset link is invalid or missing.</p>
-          <Link to="/forgot-password" className="btn btn-primary" style={{ display: 'inline-block', marginTop: '1.5rem', textDecoration: 'none' }}>
-            Request New Link
-          </Link>
+        <div className="auth-container">
+          {/* Left Panel: Deep Teal Brand Banner */}
+          <div className="auth-banner">
+            <div className="auth-banner-content">
+              <span className="auth-banner-logo">🚫</span>
+              <h1 className="auth-banner-title">Link Invalid</h1>
+              <p className="auth-banner-subtitle">
+                The password reset link you clicked is invalid or has expired. For security reasons, reset links are only valid for one hour.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Panel */}
+          <div className="auth-form-card" style={{ textAlign: 'center' }}>
+            <h2 style={{ fontSize: 'var(--font-size-xl)', color: 'var(--color-midnight)', marginBottom: 'var(--space-sm)' }}>Invalid Link</h2>
+            <p style={{ color: 'var(--color-muted)', fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-lg)' }}>This password reset link is invalid or missing.</p>
+            <Link to="/forgot-password" className="btn btn-primary" style={{ display: 'inline-block', borderRadius: 'var(--radius-pill)', padding: '0.75rem 2rem', textDecoration: 'none' }}>
+              Request New Link
+            </Link>
+          </div>
         </div>
       </div>
     )
@@ -56,48 +70,63 @@ export default function ResetPassword() {
         <title>Set New Password - PGKart</title>
       </Helmet>
 
-      <div className="auth-card">
-        <div className="auth-header">
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🔑</div>
-          <h2>Create New Password</h2>
-          <p>Please enter your new strong password</p>
+      <div className="auth-container">
+        {/* Left Panel: Deep Teal Brand Banner */}
+        <div className="auth-banner">
+          <div className="auth-banner-content">
+            <span className="auth-banner-logo">🔑</span>
+            <h1 className="auth-banner-title">Create Password</h1>
+            <p className="auth-banner-subtitle">
+              Choose a strong password with at least 8 characters. Make sure it is unique to protect your PGKart account details.
+            </p>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">New Password</label>
-            <input
-              className="form-control"
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="Enter new password"
-              required
-              autoFocus
-            />
+        {/* Right Panel: Form Card */}
+        <div className="auth-form-card">
+          <div className="auth-header">
+            <h2>Create New Password</h2>
+            <p>Please enter your new strong password</p>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Confirm New Password</label>
-            <input
-              className="form-control"
-              type="password"
-              value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-              placeholder="Confirm new password"
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label className="form-label" style={{ fontWeight: 500, color: 'var(--color-midnight)' }}>New Password</label>
+              <input
+                className="form-control"
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="Enter new password"
+                style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }}
+                required
+                autoFocus
+              />
+            </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '0.85rem', fontSize: '1rem', marginTop: '0.5rem' }}
-            disabled={loading}
-          >
-            {loading ? '⏳ Saving...' : 'Update Password'}
-          </button>
-        </form>
+            <div className="form-group" style={{ marginTop: 'var(--space-base)' }}>
+              <label className="form-label" style={{ fontWeight: 500, color: 'var(--color-midnight)' }}>Confirm New Password</label>
+              <input
+                className="form-control"
+                type="password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }}
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{ width: '100%', padding: '0.85rem', fontSize: 'var(--font-size-base)', borderRadius: 'var(--radius-pill)', marginTop: 'var(--space-md)' }}
+              disabled={loading}
+            >
+              {loading ? '⏳ Saving...' : 'Update Password'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   )

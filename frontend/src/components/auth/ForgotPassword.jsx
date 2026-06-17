@@ -29,58 +29,77 @@ export default function ForgotPassword() {
         <title>Forgot Password - PGKart</title>
       </Helmet>
 
-      <div className="auth-card">
-        <div className="auth-header">
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🔐</div>
-          <h2>Reset Password</h2>
-          <p>Enter your email to receive a password reset link</p>
+      <div className="auth-container">
+        {/* Left Panel: Deep Teal Brand Banner */}
+        <div className="auth-banner">
+          <div className="auth-banner-content">
+            <span className="auth-banner-logo">🔐</span>
+            <h1 className="auth-banner-title">Reset Password</h1>
+            <p className="auth-banner-subtitle">
+              Don't worry! Enter your email address and we'll send you a link to reset your password and secure your account.
+            </p>
+            <div className="auth-banner-features">
+              <div className="auth-feature-item">🔒 Secure, encrypted link generation</div>
+              <div className="auth-feature-item">⏱️ One-hour link validity window</div>
+              <div className="auth-feature-item">🛡️ Strong security protocols</div>
+            </div>
+          </div>
         </div>
 
-        {submitted ? (
-          <div style={{ textAlign: 'center', padding: '1rem' }}>
-            <p style={{ color: 'var(--success)', fontWeight: 600, marginBottom: '1rem' }}>
-              Check your inbox!
-            </p>
-            <p style={{ color: 'var(--gray-500)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-              We've sent a password reset link to <strong>{email}</strong>. It will expire in 1 hour.
-            </p>
-            <Link to="/login" className="btn btn-outline" style={{ display: 'inline-block', textDecoration: 'none' }}>
-              ← Back to Login
-            </Link>
+        {/* Right Panel: Form Card */}
+        <div className="auth-form-card">
+          <div className="auth-header">
+            <h2>Reset Password</h2>
+            <p>Enter your email to receive a password reset link</p>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label className="form-label">Email Address</label>
-              <input
-                className="form-control"
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Enter your registered email"
-                required
-                autoFocus
-              />
+
+          {submitted ? (
+            <div style={{ textAlign: 'center', padding: '1rem' }}>
+              <p style={{ color: 'var(--color-success)', fontWeight: 600, marginBottom: '1rem' }}>
+                Check your inbox!
+              </p>
+              <p style={{ color: 'var(--color-muted)', fontSize: 'var(--font-size-sm)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+                We've sent a password reset link to <strong>{email}</strong>. It will expire in 1 hour.
+              </p>
+              <Link to="/login" className="btn btn-outline" style={{ display: 'inline-block', borderRadius: 'var(--radius-pill)', padding: '0.65rem 1.5rem', borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}>
+                ← Back to Login
+              </Link>
             </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label className="form-label" style={{ fontWeight: 500, color: 'var(--color-midnight)' }}>Email Address</label>
+                <input
+                  className="form-control"
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="Enter your registered email"
+                  style={{ borderRadius: 'var(--radius-small)', borderColor: 'var(--color-secondary)' }}
+                  required
+                  autoFocus
+                />
+              </div>
 
-            <button
-              type="submit"
-              className="btn btn-primary"
-              style={{ width: '100%', padding: '0.85rem', fontSize: '1rem', marginTop: '0.5rem' }}
-              disabled={loading}
-            >
-              {loading ? '⏳ Sending...' : 'Send Reset Link'}
-            </button>
-          </form>
-        )}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ width: '100%', padding: '0.85rem', fontSize: 'var(--font-size-base)', borderRadius: 'var(--radius-pill)', marginTop: 'var(--space-md)' }}
+                disabled={loading}
+              >
+                {loading ? '⏳ Sending...' : 'Send Reset Link'}
+              </button>
+            </form>
+          )}
 
-        {!submitted && (
-          <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem' }}>
-            <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
-              ← Back to Login
-            </Link>
-          </div>
-        )}
+          {!submitted && (
+            <div style={{ textAlign: 'center', marginTop: 'var(--space-lg)', fontSize: 'var(--font-size-sm)' }}>
+              <Link to="/login" style={{ color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}>
+                ← Back to Login
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

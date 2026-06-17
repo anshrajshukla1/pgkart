@@ -1,0 +1,59 @@
+/* Design Tokens for PGKart */
+
+:root {
+  /* Color System */
+  --color-primary: #0D5B63;      /* Deep Teal */
+  --color-secondary: #6CAAA7;    /* Sea Mist */
+  --color-accent: #FFB48A;       /* Apricot */
+  --color-bg: #FBF6F0;           /* Soft Sand Ivory */
+  --color-sage: #9EB79F;         /* Sage */
+  --color-midnight: #0B1D2D;     /* Midnight */
+  --color-white: #FFFFFF;        /* White */
+  --color-muted: #5a7a7c;        /* Muted Text */
+  
+  /* Status Colors (paired with tokens to avoid hardcoded hex codes) */
+  --color-success: #2E7D32;      /* Deep Sage / Forest Green */
+  --color-success-bg: #E8F5E9;
+  --color-error: #C62828;        /* Deep Red */
+  --color-error-bg: #FFEBEE;
+  --color-warning: #EF6C00;      /* Amber / Orange */
+  --color-warning-bg: #FFF3E0;
+  --color-info: #1565C0;
+  --color-info-bg: #E3F2FD;
+
+  /* Spacing Scale (4px base) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-base: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  /* Typography Scale */
+  --font-size-xs: 0.75rem;       /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;        /* 16px */
+  --font-size-lg: 1.125rem;      /* 18px */
+  --font-size-xl: 1.25rem;       /* 20px */
+  --font-size-2xl: 1.5rem;       /* 24px */
+  --font-size-3xl: 2rem;         /* 32px */
+  --font-size-4xl: 3rem;         /* 48px */
+
+  /* Border Radius */
+  --radius-small: 6px;
+  --radius-medium: 12px;
+  --radius-large: 20px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-resting: 0 2px 8px rgba(11, 29, 45, 0.06);
+  --shadow-lifted: 0 8px 24px rgba(11, 29, 45, 0.12);
+  --shadow-floating: 0 16px 48px rgba(11, 29, 45, 0.18);
+
+  /* Transitions */
+  --transition-fast: 150ms ease-out;
+  --transition-base: 220ms ease-out;
+}

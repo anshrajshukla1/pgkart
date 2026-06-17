@@ -14,9 +14,9 @@ const SORT_OPTIONS = [
 
 function SkeletonCard() {
   return (
-    <div style={{ background: 'white', borderRadius: '20px', border: '1.5px solid #E5E7EB', overflow: 'hidden' }}>
-      <div className="skeleton" style={{ aspectRatio: 1 }} />
-      <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+    <div style={{ background: 'var(--color-white)', borderRadius: 'var(--radius-large)', border: '1.5px solid var(--color-bg)', overflow: 'hidden' }}>
+      <div className="skeleton" style={{ aspectRatio: '1.33' }} />
+      <div style={{ padding: 'var(--space-base)', display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
         <div className="skeleton" style={{ height: '14px', borderRadius: '6px', width: '80%' }} />
         <div className="skeleton" style={{ height: '14px', borderRadius: '6px', width: '50%' }} />
         <div className="skeleton" style={{ height: '36px', borderRadius: '8px', marginTop: '0.25rem' }} />
@@ -52,8 +52,6 @@ export default function Products() {
       const found = categories.find(c => c.categoryName.toLowerCase() === category.toLowerCase())
       if (found) categoryId = found.categoryId
       else {
-        // If category not found, we shouldn't show all products, we should show empty!
-        // A hack is to pass a non-existent categoryId like -1
         categoryId = -1
       }
     }
@@ -81,66 +79,15 @@ export default function Products() {
   }
 
   return (
-    <div style={{ minHeight: 'calc(100vh - 64px)', padding: '2.5rem 1.5rem', background: 'linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%)' }}>
+    <div style={{ minHeight: 'calc(100vh - 72px)', padding: 'var(--space-2xl) var(--space-base)', background: 'var(--color-bg)' }}>
       <Helmet>
         <title>Products - PGKart | Hostel Essentials</title>
       </Helmet>
 
       <div className="container">
-        {/* Header */}
-        <div style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
-          flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem'
-        }}>
-          <div>
-            <h1 style={{
-              fontFamily: 'var(--font-heading)', fontSize: '2.25rem',
-              fontWeight: 800, color: 'var(--gray-900)', marginBottom: '0.25rem',
-              letterSpacing: '-0.02em'
-            }}>
-              {keyword ? `🔍 Results for "${keyword}"` : category ? `✨ ${category}` : '🛍️ All Products'}
-            </h1>
-            <p style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>
-              {loading ? 'Loading...' : `${totalElements} products found`}
-            </p>
-            {(keyword || category) && (
-              <button
-                onClick={clearSearch}
-                style={{
-                  marginTop: '0.6rem', fontSize: '0.75rem', color: '#1E40AF',
-                  background: '#DBEAFE', border: '1px solid #BFDBFE', padding: '4px 12px',
-                  borderRadius: '16px', cursor: 'pointer', fontWeight: 600,
-                  display: 'inline-flex', alignItems: 'center', gap: '4px',
-                  transition: 'background 0.2s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.background = '#BFDBFE'}
-                onMouseOut={(e) => e.currentTarget.style.background = '#DBEAFE'}
-              >
-                <span style={{fontSize: '0.9rem', lineHeight: 1}}>×</span> Clear Filter
-              </button>
-            )}
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--gray-600)' }}>Sort by:</label>
-            <select
-              value={sortIndex}
-              onChange={handleSort}
-              style={{ width: 'auto', padding: '0.6rem 1rem', fontSize: '0.9rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: 'white', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', fontWeight: 600, color: 'var(--gray-700)', outline: 'none' }}
-            >
-              {SORT_OPTIONS.map((o, i) => (
-                <option key={i} value={i}>{o.label}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Categories Strip */}
-        {categories.length > 0 && (
-          <div style={{
-            display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '2rem',
-            scrollbarWidth: 'none', msOverflowStyle: 'none'
-          }} className="hide-scrollbar">
+        {/* Horizontal Category + Sort Filter Bar */}
+        <div className="products-filter-bar">
+          <div className="products-category-pills">
             <button
               onClick={() => {
                 const newParams = new URLSearchParams(searchParams)
@@ -148,13 +95,7 @@ export default function Products() {
                 setSearchParams(newParams)
                 setPage(0)
               }}
-              style={{
-                padding: '0.5rem 1.25rem', borderRadius: '24px', whiteSpace: 'nowrap', fontWeight: 600, fontSize: '0.9rem',
-                border: !category ? 'none' : '1.5px solid var(--gray-200)',
-                background: !category ? 'var(--primary)' : 'white',
-                color: !category ? 'white' : 'var(--gray-700)',
-                cursor: 'pointer', transition: 'all 0.2s', boxShadow: !category ? '0 4px 12px rgba(79,70,229,0.2)' : 'none'
-              }}
+              className={`products-category-pill ${!category ? 'active' : ''}`}
             >
               All Products
             </button>
@@ -167,19 +108,75 @@ export default function Products() {
                   setSearchParams(newParams)
                   setPage(0)
                 }}
-                style={{
-                  padding: '0.5rem 1.25rem', borderRadius: '24px', whiteSpace: 'nowrap', fontWeight: 600, fontSize: '0.9rem',
-                  border: category === c.categoryName ? 'none' : '1.5px solid var(--gray-200)',
-                  background: category === c.categoryName ? 'var(--primary)' : 'white',
-                  color: category === c.categoryName ? 'white' : 'var(--gray-700)',
-                  cursor: 'pointer', transition: 'all 0.2s', boxShadow: category === c.categoryName ? '0 4px 12px rgba(79,70,229,0.2)' : 'none'
-                }}
+                className={`products-category-pill ${category === c.categoryName ? 'active' : ''}`}
               >
                 {c.categoryName}
               </button>
             ))}
           </div>
-        )}
+
+          <select
+            value={sortIndex}
+            onChange={handleSort}
+            className="products-sort-select"
+          >
+            {SORT_OPTIONS.map((o, i) => (
+              <option key={i} value={i}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Status bar below filter (results count + active filters) */}
+        <div className="products-status-row">
+          <div className="products-results-count">
+            {loading ? 'Loading...' : `${totalElements} products found`}
+          </div>
+
+          <div className="products-active-filters">
+            {keyword && (
+              <div className="products-filter-chip">
+                <span>Search: {keyword}</span>
+                <button onClick={() => {
+                  const newParams = new URLSearchParams(searchParams)
+                  newParams.delete('search')
+                  setSearchParams(newParams)
+                  setPage(0)
+                }}>×</button>
+              </div>
+            )}
+            {category && (
+              <div className="products-filter-chip">
+                <span>Category: {category}</span>
+                <button onClick={() => {
+                  const newParams = new URLSearchParams(searchParams)
+                  newParams.delete('category')
+                  setSearchParams(newParams)
+                  setPage(0)
+                }}>×</button>
+              </div>
+            )}
+            {(keyword || category) && (
+              <button
+                onClick={clearSearch}
+                style={{
+                  fontSize: 'var(--font-size-xs)',
+                  color: 'var(--color-primary)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  textDecoration: 'underline'
+                }}
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+
+          <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-muted)', fontWeight: 500 }}>
+            Sorted by: {SORT_OPTIONS[sortIndex].label}
+          </div>
+        </div>
 
         {/* Products Grid */}
         {loading ? (
@@ -187,10 +184,11 @@ export default function Products() {
             {Array(12).fill(0).map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : products.length === 0 ? (
-          <div className="empty-state">
+          <div className="empty-state" style={{ background: 'var(--color-white)', borderRadius: 'var(--radius-large)', padding: 'var(--space-4xl) var(--space-xl)' }}>
             <div className="empty-state-icon">🔍</div>
             <h3>No products found</h3>
-            <p>Try adjusting your search or browse all products.</p>
+            <p>Try adjusting your search or check different categories.</p>
+            <button className="btn btn-primary" onClick={clearSearch}>Browse All Products</button>
           </div>
         ) : (
           <div className="products-grid">
@@ -206,7 +204,7 @@ export default function Products() {
               onClick={() => setPage(p => Math.max(0, p - 1))}
               disabled={page === 0}
             >
-              ←
+              &larr;
             </button>
             {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
               let pageNum = i
@@ -230,7 +228,7 @@ export default function Products() {
               onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
             >
-              →
+              &rarr;
             </button>
           </div>
         )}
