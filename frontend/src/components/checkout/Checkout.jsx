@@ -51,6 +51,7 @@ export default function Checkout() {
   })
   const [placing, setPlacing] = useState(false)
   const [orderSuccess, setOrderSuccess] = useState(false)
+  const [paymentFailed, setPaymentFailed] = useState(false)
   const [couponCode, setCouponCode] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState(null)
   const [validatingCoupon, setValidatingCoupon] = useState(false)
@@ -166,7 +167,7 @@ export default function Checkout() {
       const rzp = new window.Razorpay(options)
       rzp.on('payment.failed', (resp) => {
         console.error('Razorpay payment failed:', resp.error)
-        toast.error('Payment failed: ' + (resp.error?.description || 'Unknown error'))
+        setPaymentFailed(true)
         setPlacing(false)
       })
       rzp.open()

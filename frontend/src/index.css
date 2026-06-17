@@ -75,9 +75,10 @@ img { max-width: 100%; }
 
 /* ============ NAVBAR ============ */
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  width: 100%;
+  z-index: 1000;
   background: rgba(255,255,255,0.95);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--gray-200);
@@ -324,6 +325,7 @@ img { max-width: 100%; }
   flex-wrap: wrap;
   margin-top: 3rem;
 }
+
 
 .hero-pill {
   display: flex;
@@ -1554,3 +1556,7 @@ html, body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.app-container { padding-top: 64px; }
+main { min-height: calc(100vh - 64px); }
+

@@ -13,6 +13,7 @@ const ProductDetail = lazy(() => import('./components/products/ProductDetail.jsx
 const Cart = lazy(() => import('./components/cart/Cart.jsx'))
 const Checkout = lazy(() => import('./components/checkout/Checkout.jsx'))
 const OrderHistory = lazy(() => import('./components/orders/OrderHistory.jsx'))
+const Profile = lazy(() => import('./components/profile/Profile.jsx'))
 const Login = lazy(() => import('./components/auth/Login.jsx'))
 const Register = lazy(() => import('./components/auth/Register.jsx'))
 const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword.jsx'))
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="/forgot-password" element={<><Navbar /><main><ForgotPassword /></main><Footer /></>} />
           <Route path="/reset-password" element={<><Navbar /><main><ResetPassword /></main><Footer /></>} />
           {/* Protected customer routes */}
+          <Route path="/profile" element={<PrivateRoute><><Navbar /><main><Profile /></main><Footer /></></PrivateRoute>} />
           <Route path="/cart" element={<PrivateRoute><><Navbar /><main><Cart /></main><Footer /></></PrivateRoute>} />
           <Route path="/checkout" element={<PrivateRoute><><Navbar /><main><Checkout /></main><Footer /></></PrivateRoute>} />
           <Route path="/orders" element={<PrivateRoute><><Navbar /><main><OrderHistory /></main><Footer /></></PrivateRoute>} />

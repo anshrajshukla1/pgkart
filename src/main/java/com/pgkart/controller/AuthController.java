@@ -118,8 +118,7 @@ public class AuthController {
         User user = userRepository.findByEmail(email).orElse(null);
         
         if (user == null) {
-            String username = email.split("@")[0] + "_" + java.util.UUID.randomUUID().toString().substring(0, 5);
-            user = new User(username, email, encoder.encode(java.util.UUID.randomUUID().toString()));
+            user = new User(email, email, encoder.encode(java.util.UUID.randomUUID().toString()));
             Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
                     .orElseThrow(() -> new ApiException("Error: Role not found"));
             user.setRoles(Set.of(userRole));
@@ -143,6 +142,25 @@ public class AuthController {
     @GetMapping("/username")
     public ResponseEntity<String> currentUserName(Authentication authentication) {
         return ResponseEntity.ok(authentication != null ? authentication.getName() : "");
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(Authentication authentication, @Valid @RequestBody com.pgkart.security.request.UpdatePasswordRequest request) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("User not authenticated"));
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new ApiException("User not found"));
+
+        if (!encoder.matches(request.getOldPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Incorrect old password"));
+        }
+
+        user.setPassword(encoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new MessageResponse("Password updated successfully"));
     }
 
     @GetMapping("/user")

@@ -12,7 +12,7 @@ export default function Navbar() {
 
   const cart = useSelector(state => state.cart)
   const auth = useSelector(state => state.auth)
-  const cartCount = cart?.products?.length || 0
+  const cartCount = cart?.cartItems ? cart.cartItems.reduce((sum, item) => sum + item.quantity, 0) : 0
   const isLoggedIn = !!auth?.user
   const isAdmin = auth?.user?.roles?.includes('ROLE_ADMIN')
 
@@ -100,6 +100,19 @@ export default function Navbar() {
                     ⚙️ Admin Panel
                   </Link>
                 )}
+                <Link
+                  to="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  style={{
+                    display: 'block', padding: '0.65rem 1rem', borderRadius: '8px',
+                    fontSize: '0.875rem', color: '#374151', fontWeight: '500',
+                    transition: 'background 0.15s'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#F3F4F6'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  👤 My Profile
+                </Link>
                 <Link
                   to="/orders"
                   onClick={() => setMenuOpen(false)}
