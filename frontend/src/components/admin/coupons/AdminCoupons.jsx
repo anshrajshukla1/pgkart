@@ -110,9 +110,11 @@ export default function AdminCoupons() {
                   onChange={handleChange} placeholder="0" min={form.discountType === 'FREE_DELIVERY' ? 0 : 1} required={form.discountType !== 'FREE_DELIVERY'} disabled={form.discountType === 'FREE_DELIVERY'} />
               </div>
               <div className="form-group">
-                <label className="form-label">Minimum Order Value (₹) *</label>
+                <label className="form-label">
+                  {form.discountType === 'FREE_DELIVERY' ? 'Minimum Order Value (Not Required)' : 'Minimum Order Value (₹) *'}
+                </label>
                 <input className="form-control" type="number" name="minOrderValue" value={form.minOrderValue || ''}
-                  onChange={handleChange} placeholder="e.g. 500" min={0} required />
+                  onChange={handleChange} placeholder="e.g. 500" min={0} required={form.discountType !== 'FREE_DELIVERY'} disabled={form.discountType === 'FREE_DELIVERY'} />
               </div>
               <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '0.75rem' }}>
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', margin: 0 }}>
