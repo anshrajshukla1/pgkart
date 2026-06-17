@@ -76,7 +76,8 @@ public class OrderController {
                 verifyRequest.getRazorpaySignature(),
                 "PAYMENT_SUCCESS",
                 verifyRequest.getCouponCode(),
-                verifyRequest.getDiscountAmount()
+                verifyRequest.getDiscountAmount(),
+                verifyRequest.getDeliveryFee()
         );
 
         // Send confirmation email asynchronously

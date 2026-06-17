@@ -15,4 +15,5 @@ public class RazorpayVerifyRequest {
     private Long addressId;
     private String couponCode;
     private BigDecimal discountAmount;
+    private BigDecimal deliveryFee;
 }

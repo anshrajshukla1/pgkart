@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTO placeOrder(String emailId, Long addressId, String paymentMethod,
                                String pgName, String pgPaymentId, String pgStatus, String pgResponseMessage,
-                               String couponCode, BigDecimal discountAmount) {
+                               String couponCode, BigDecimal discountAmount, BigDecimal deliveryFee) {
         Cart cart = cartRepository.findCartByEmail(emailId);
         if (cart == null) {
             throw new ResourceNotFoundException("Cart", "email", emailId);
@@ -82,6 +82,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setAppliedCouponCode(couponCode);
         order.setDiscountAmount(discountAmount);
+        order.setDeliveryFee(deliveryFee != null ? deliveryFee : BigDecimal.ZERO);
 
         Payment payment = new Payment(paymentMethod, pgName, pgPaymentId, pgStatus, pgResponseMessage);
         payment.setOrder(order);

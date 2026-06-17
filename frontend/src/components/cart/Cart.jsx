@@ -118,15 +118,15 @@ export default function Cart() {
               <span>Subtotal ({products.length} items)</span>
               <span>₹{Number(totalPrice || 0).toFixed(0)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: '#10B981' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: Number(totalPrice || 0) >= 499 ? '#10B981' : '#6B7280' }}>
               <span>🚚 Delivery</span>
-              <span style={{ fontWeight: 600 }}>FREE</span>
+              <span style={{ fontWeight: 600 }}>{Number(totalPrice || 0) >= 499 ? 'FREE' : 'Calculated at checkout'}</span>
             </div>
           </div>
 
           <div style={{ borderTop: '1.5px solid #E5E7EB', paddingTop: '1rem', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: '1.1rem' }}>
-              <span>Total</span>
+              <span>Estimated Total</span>
               <span style={{ color: '#4F46E5' }}>₹{Number(totalPrice || 0).toFixed(0)}</span>
             </div>
           </div>

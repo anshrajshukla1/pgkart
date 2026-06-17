@@ -148,7 +148,8 @@ export default function Checkout() {
               razorpaySignature: response.razorpay_signature,
               addressId: savedAddress.addressId,
               couponCode: appliedCoupon ? appliedCoupon.code : null,
-              discountAmount: discount
+              discountAmount: discount,
+              deliveryFee: shipping
             })
             dispatch(fetchCart())
             setOrderSuccess(true)
@@ -189,15 +190,19 @@ export default function Checkout() {
   }
 
   const subtotal = Number(totalPrice || 0)
-  const shipping = 0 // subtotal > 499 ? 0 : 49
+  let shipping = subtotal >= 499 ? 0 : 49
   let discount = 0
+
   if (appliedCoupon) {
     if (appliedCoupon.discountType === 'PERCENTAGE') {
       discount = subtotal * (appliedCoupon.discountValue / 100)
-    } else {
+    } else if (appliedCoupon.discountType === 'FLAT') {
       discount = appliedCoupon.discountValue
+    } else if (appliedCoupon.discountType === 'FREE_DELIVERY') {
+      shipping = 0
     }
   }
+
   const grandTotal = Math.max(0, subtotal - discount + shipping)
 
   return (
@@ -410,18 +415,22 @@ export default function Checkout() {
             )
           })}
           <div className="summary-row">
-            <span>Shipping</span>
-            <span style={{ color: 'var(--success)', fontWeight: 600 }}>
+            <span>Subtotal</span>
+            <span>₹{Math.round(subtotal)}</span>
+          </div>
+          <div className="summary-row">
+            <span>Shipping {shipping === 0 && subtotal < 499 && '(Waived)'}</span>
+            <span style={{ color: shipping === 0 ? 'var(--success)' : 'inherit', fontWeight: 600 }}>
               {shipping === 0 ? 'FREE' : `₹${shipping}`}
             </span>
           </div>
-          {appliedCoupon && (
+          {appliedCoupon && discount > 0 && (
             <div className="summary-row" style={{ color: 'var(--success)', fontWeight: 600 }}>
               <span>Discount ({appliedCoupon.code})</span>
               <span>-₹{Math.round(discount)}</span>
             </div>
           )}
-          <div className="summary-total">
+          <div className="summary-row total-row" style={{ borderTop: '1px solid var(--gray-200)', marginTop: '0.5rem', paddingTop: '0.5rem' }}>
             <span>Total</span>
             <span>₹{Math.round(grandTotal)}</span>
           </div>

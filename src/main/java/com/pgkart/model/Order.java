@@ -60,4 +60,6 @@ public class Order {
     // Coupon tracking
     private String appliedCouponCode;
     private BigDecimal discountAmount;
+
+    private BigDecimal deliveryFee = BigDecimal.ZERO;
 }

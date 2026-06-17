@@ -98,6 +98,7 @@ export default function AdminCoupons() {
                 <select className="form-control" name="discountType" value={form.discountType} onChange={handleChange} required>
                   <option value="PERCENTAGE">Percentage (%)</option>
                   <option value="FLAT">Flat Amount (₹)</option>
+                  <option value="FREE_DELIVERY">Free Delivery</option>
                 </select>
               </div>
               <div className="form-group">

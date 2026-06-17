@@ -24,4 +24,5 @@ public class OrderDTO {
     private String returnStatus;
     private String appliedCouponCode;
     private BigDecimal discountAmount;
+    private BigDecimal deliveryFee;
 }

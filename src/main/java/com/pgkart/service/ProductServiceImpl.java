@@ -153,7 +153,12 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId.toString()));
-        productRepository.delete(product);
+        try {
+            productRepository.delete(product);
+            productRepository.flush();
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new com.pgkart.exceptions.ApiException("Cannot delete product because it is part of existing orders or carts. Please update its stock or disable it instead.");
+        }
         return modelMapper.map(product, ProductDTO.class);
     }
 

@@ -4,12 +4,13 @@ import com.pgkart.payload.OrderDTO;
 import com.pgkart.payload.OrderResponse;
 import com.pgkart.payload.OrderTrackingDTO;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderService {
     OrderDTO placeOrder(String emailId, Long addressId, String paymentMethod,
                         String pgName, String pgPaymentId, String pgStatus, String pgResponseMessage,
-                        String couponCode, java.math.BigDecimal discountAmount);
+                        String couponCode, BigDecimal discountAmount, BigDecimal deliveryFee);
     OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
     OrderDTO updateOrderTracking(Long orderId, OrderTrackingDTO trackingDTO);
     List<OrderDTO> getOrdersByEmail(String email);
