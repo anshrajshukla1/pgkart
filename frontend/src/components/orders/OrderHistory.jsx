@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet-async'
-import { fetchUserOrders, requestOrderReturn } from '../../store/actions/index.js'
+import { fetchUserOrders, requestOrderReturn, addToCart } from '../../store/actions/index.js'
 import toast from 'react-hot-toast'
 
 const STATUS_MAP = {
@@ -77,10 +77,24 @@ function OrderStatusBar({ status }) {
 
 export default function OrderHistory() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { orders, loading } = useSelector(state => state.orders)
   const [processingReturn, setProcessingReturn] = React.useState(null)
   const [returnConfirmModal, setReturnConfirmModal] = React.useState(null)
   const [activeTab, setActiveTab] = React.useState('All')
+
+  const handleBuyAgain = async (order) => {
+    try {
+      await Promise.all(order.orderItems.map(item => {
+        const pid = item.product?.productId || item.productId;
+        return dispatch(addToCart(pid, item.quantity));
+      }));
+      toast.success('Items added to cart!');
+      navigate('/cart');
+    } catch (err) {
+      toast.error('Failed to add items to cart');
+    }
+  }
 
   const handleReturnRequest = async () => {
     const orderId = returnConfirmModal;
@@ -279,17 +293,13 @@ export default function OrderHistory() {
                         borderRadius: 'var(--radius-pill)',
                         padding: '0.45rem 1.15rem',
                         fontSize: 'var(--font-size-xs)',
-                        borderColor: 'var(--color-secondary)',
-                        color: 'var(--color-midnight)',
+                        borderColor: 'var(--color-primary)',
+                        color: 'var(--color-primary)',
                         background: 'transparent'
                       }}
-                      onClick={() => {
-                        const infoString = `Order #${order.orderId}\nDate: ${orderDate}\nStatus: ${order.orderStatus}\nTotal: ₹${Math.round(order.totalAmount || 0)}`
-                        navigator.clipboard.writeText(infoString)
-                        toast.success('Order details copied to clipboard!')
-                      }}
+                      onClick={() => handleBuyAgain(order)}
                     >
-                      Details
+                      Buy Again
                     </button>
                     
                     <button

@@ -254,6 +254,13 @@ export default function Navbar() {
                     >
                       <FiShoppingBag style={{ marginRight: '8px', verticalAlign: 'middle' }} /> My Orders
                     </Link>
+                    <Link
+                      to="/profile"
+                      onClick={() => setMenuOpen(false)}
+                      className="user-dropdown-item"
+                    >
+                      <FiUser style={{ marginRight: '8px', verticalAlign: 'middle' }} /> My Profile
+                    </Link>
                     <hr style={{ margin: '0.4rem 0', border: 'none', borderTop: '1px solid var(--color-bg)' }} />
                     <button
                       onClick={handleLogout}
@@ -529,6 +536,14 @@ export default function Navbar() {
                 style={{ width: '100%', textAlign: 'center', borderRadius: 'var(--radius-pill)' }}
               >
                 My Orders
+              </Link>
+              <Link
+                to="/profile"
+                onClick={() => { document.getElementById('drawer-toggle').checked = false }}
+                className="btn btn-outline"
+                style={{ width: '100%', textAlign: 'center', borderRadius: 'var(--radius-pill)' }}
+              >
+                My Profile
               </Link>
               <button
                 onClick={() => {
