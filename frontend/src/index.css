@@ -3086,7 +3086,7 @@ main {
     padding-top: 60px;
   }
   .navbar-brand img {
-    height: 48px;
+    height: 56px;
     width: auto;
   }
   .navbar-center {
@@ -3947,7 +3947,7 @@ html, body {
     padding: 0 var(--space-xs);
   }
   .navbar-brand img {
-    height: 42px;
+    height: 52px;
     width: auto;
   }
   .cart-drawer {
