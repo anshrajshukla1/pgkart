@@ -184,9 +184,9 @@ main {
 }
 
 .navbar-brand img {
-  height: 40px;
-  width: 40px;
-  max-height: 40px;
+  height: 54px;
+  width: auto;
+  max-height: 54px;
   object-fit: contain;
   border-radius: var(--radius-small);
   transition: transform 0.2s ease;
@@ -3081,8 +3081,9 @@ main {
     padding-top: 60px;
   }
   .navbar-brand img {
-    height: 40px;
-    max-height: 40px;
+    height: 42px;
+    width: auto;
+    max-height: 42px;
   }
   .navbar-center {
     display: none !important;
@@ -3942,9 +3943,9 @@ html, body {
     padding: 0 var(--space-xs);
   }
   .navbar-brand img {
-    height: 32px;
-    width: 32px;
-    max-height: 32px;
+    height: 36px;
+    width: auto;
+    max-height: 36px;
   }
   .cart-drawer {
     max-width: 100%;
