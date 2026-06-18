@@ -3613,6 +3613,12 @@ html, body {
   }
 
   /* Product detail — single column improvements */
+  .product-detail-page {
+    padding: var(--space-sm) var(--space-sm);
+  }
+  .product-detail-breadcrumb {
+    margin-bottom: 0.75rem !important;
+  }
   .product-detail-left {
     max-height: 360px;
   }
