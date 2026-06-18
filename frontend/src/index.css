@@ -133,8 +133,8 @@ img {
 }
 
 /* Spacer to push content below fixed navbar */
-.navbar + * {
-  margin-top: 78px;
+main {
+  padding-top: 78px;
 }
 
 .navbar-inner {
@@ -3077,8 +3077,8 @@ img {
     padding: 0 var(--space-sm);
     height: 60px;
   }
-  .navbar + * {
-    margin-top: 60px;
+  main {
+    padding-top: 60px;
   }
   .navbar-brand img {
     height: 40px;
