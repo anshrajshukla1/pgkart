@@ -170,7 +170,7 @@ export const verifyAndPlaceOrder = async (verifyData) => {
 // ===== ADMIN =====
 export const adminFetchAllOrders = (params = {}) => async () => {
   const { pageNumber = 0, pageSize = 20 } = params
-  const { data } = await api.get(`/api/admin/orders?pageNumber=${pageNumber}&pageSize=${pageSize}`)
+  const { data } = await api.get(`/api/admin/orders?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=orderId&sortOrder=desc`)
   return data
 }
 
