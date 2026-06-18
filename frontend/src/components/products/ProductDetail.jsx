@@ -64,8 +64,6 @@ export default function ProductDetail() {
   }
 
   const categoryName = category?.categoryName || 'Essentials'
-  // Mock thumbnails based on the main image for UI completeness
-  const thumbnails = imageUrl ? [imageUrl, imageUrl, imageUrl] : []
 
   return (
     <div className="product-detail-page">
@@ -100,22 +98,7 @@ export default function ProductDetail() {
               }}>🛍️</div>
             )}
           </div>
-
-          {/* Thumbnails Row */}
-          {thumbnails.length > 0 && (
-            <div className="product-detail-thumbnails">
-              {thumbnails.map((t, i) => (
-                <div
-                  key={i}
-                  className={`product-detail-thumbnail ${activeThumb === i ? 'active' : ''}`}
-                  onClick={() => setActiveThumb(i)}
-                >
-                  <img src={t} alt={`${productName} thumbnail ${i}`} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+          </div>
 
         {/* Right Column: Info details (Sticky on scroll) */}
         <div className="product-detail-right">
