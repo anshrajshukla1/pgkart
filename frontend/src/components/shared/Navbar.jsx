@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { logoutUser, removeFromCart, updateCartQuantity } from '../../store/actions/index.js'
 import api from '../../api/api.js'
-import { FiSearch, FiHeart, FiShoppingCart, FiUser, FiMenu, FiX, FiLogOut, FiSettings, FiShoppingBag, FiCornerDownLeft, FiTrash2 } from 'react-icons/fi'
+import { FiSearch, FiShoppingCart, FiUser, FiMenu, FiX, FiLogOut, FiSettings, FiShoppingBag, FiCornerDownLeft, FiTrash2 } from 'react-icons/fi'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -206,11 +206,6 @@ export default function Navbar() {
             >
               <FiSearch />
             </button>
-
-            {/* Wishlist placeholder icon */}
-            <Link to="/products" className="navbar-icon-btn" aria-label="Wishlist">
-              <FiHeart />
-            </Link>
 
             {/* Cart Icon button */}
             <button 

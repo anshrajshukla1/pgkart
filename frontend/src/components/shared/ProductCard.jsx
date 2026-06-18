@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../../store/actions/index.js'
-import { FiHeart, FiShoppingCart } from 'react-icons/fi'
+import { FiShoppingCart } from 'react-icons/fi'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -64,17 +64,6 @@ export default function ProductCard({ product }) {
         {hasDiscount && !isOutOfStock && (
           <div className="product-card-discount-badge">{discount}% OFF</div>
         )}
-
-        <button 
-          className="product-card-wishlist-btn" 
-          onClick={(e) => {
-            e.stopPropagation()
-            // Visual feedback only as no wishlist logic exists in Redux store
-          }}
-          aria-label="Add to Wishlist"
-        >
-          <FiHeart style={{ fill: 'currentColor' }} />
-        </button>
       </div>
 
       {/* Body details */}
