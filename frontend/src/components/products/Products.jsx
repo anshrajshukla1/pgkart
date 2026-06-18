@@ -129,7 +129,7 @@ export default function Products() {
         {/* Status bar below filter (results count + active filters) */}
         <div className="products-status-row">
           <div className="products-results-count">
-            {loading ? 'Loading...' : `${totalElements} products found`}
+            {loading && 'Loading...'}
           </div>
 
           <div className="products-active-filters">
