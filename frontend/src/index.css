@@ -189,7 +189,6 @@ main {
   max-height: 54px;
   object-fit: contain;
   border-radius: var(--radius-small);
-  mix-blend-mode: multiply;
   transition: transform 0.2s ease;
 }
 
