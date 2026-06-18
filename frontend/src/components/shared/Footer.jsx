@@ -52,7 +52,7 @@ export default function Footer() {
           <ul>
             <li><a href="mailto:support.pgkart@gmail.com">support.pgkart@gmail.com</a></li>
             <li><Link to="/orders">Returns & Exchanges</Link></li>
-            <li><a href="#">FAQ & Support</a></li>
+            <li><a href="mailto:support.pgkart@gmail.com">FAQ & Support</a></li>
           </ul>
         </div>
       </div>
