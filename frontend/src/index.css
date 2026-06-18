@@ -2204,7 +2204,14 @@ main {
   .footer-grid { grid-template-columns: 1fr; }
   .trust-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .trust-section { margin-top: 0; padding: 32px 1rem; }
-  .trust-card { padding: 20px 18px; }
+  .trust-card { 
+    padding: 16px 12px; 
+    flex-direction: column; 
+    align-items: center; 
+    text-align: center;
+    gap: 10px;
+  }
+  .trust-card-content { align-items: center; }
   .testimonials-grid { grid-template-columns: 1fr; gap: 16px; }
   .categories-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
   .footer-container { grid-template-columns: 1fr 1fr; gap: 32px; padding: 40px 20px; }
