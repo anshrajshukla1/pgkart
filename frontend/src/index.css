@@ -184,11 +184,11 @@ main {
 }
 
 .navbar-brand img {
-  height: 110px; /* scaled up to counter internal image padding */
+  height: 48px;
   width: auto;
-  max-height: none;
   object-fit: contain;
-  mix-blend-mode: multiply;
+  transform: scale(2.4);
+  transform-origin: left center;
   transition: transform 0.2s ease;
 }
 
@@ -197,7 +197,7 @@ main {
 }
 
 .navbar-brand:hover img {
-  transform: scale(1.02);
+  transform: scale(2.5);
 }
 
 /* Center navigation links - Segmented Pills Aligned */
@@ -3088,9 +3088,10 @@ main {
     padding-top: 60px;
   }
   .navbar-brand img {
-    height: 90px;
+    height: 38px;
     width: auto;
-    max-height: none;
+    transform: scale(2.2);
+    transform-origin: left center;
   }
   .navbar-center {
     display: none !important;
@@ -3950,9 +3951,10 @@ html, body {
     padding: 0 var(--space-xs);
   }
   .navbar-brand img {
-    height: 80px;
+    height: 32px;
     width: auto;
-    max-height: none;
+    transform: scale(2.2);
+    transform-origin: left center;
   }
   .cart-drawer {
     max-width: 100%;
