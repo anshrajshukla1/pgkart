@@ -140,7 +140,7 @@ export default function ProductDetail() {
             {isOutOfStock ? (
               <span className="product-detail-stock-badge out-of-stock">❌ Out of Stock</span>
             ) : isLowStock ? (
-              <span className="product-detail-stock-badge low-stock">⚡ Only {quantity} Left</span>
+              <span className="product-detail-stock-badge low-stock">⚡ Low Stock</span>
             ) : (
               <span className="product-detail-stock-badge in-stock">✓ In Stock</span>
             )}
@@ -158,7 +158,6 @@ export default function ProductDetail() {
                   <span className="product-detail-qty-value">{qty}</span>
                   <button className="product-detail-qty-btn" onClick={() => setQty(q => Math.min(quantity, q + 1))}>+</button>
                 </div>
-                <span style={{ color: 'var(--color-muted)', fontSize: 'var(--font-size-xs)' }}>Max {quantity}</span>
               </div>
             </div>
           )}

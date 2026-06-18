@@ -301,24 +301,6 @@ export default function OrderHistory() {
                     >
                       Buy Again
                     </button>
-                    
-                    <button
-                      className="btn btn-outline"
-                      style={{
-                        borderRadius: 'var(--radius-pill)',
-                        padding: '0.45rem 1.15rem',
-                        fontSize: 'var(--font-size-xs)',
-                        borderColor: 'var(--color-primary)',
-                        color: 'var(--color-primary)',
-                        background: 'transparent'
-                      }}
-                      onClick={() => {
-                        toast.success('Adding items to your cart...')
-                        navigate('/products')
-                      }}
-                    >
-                      Buy Again
-                    </button>
 
                     {/* Return Request button */}
                     {order.orderStatus === 'Delivered' && (
