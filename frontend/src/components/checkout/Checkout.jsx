@@ -54,6 +54,7 @@ export default function Checkout() {
   const [couponCode, setCouponCode] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState(null)
   const [validatingCoupon, setValidatingCoupon] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState('ONLINE')
 
   const handleApplyCoupon = async () => {
     if (!couponCode) return
@@ -106,6 +107,18 @@ export default function Checkout() {
         mobileNumber: address.mobileNumber
       }
       const { data: savedAddress } = await api.post('/api/addresses', addressPayload)
+
+      if (paymentMethod === 'COD') {
+        await api.post('/api/payment/cod/place', {
+          addressId: savedAddress.addressId,
+          couponCode: appliedCoupon ? appliedCoupon.code : null,
+          discountAmount: discount,
+          deliveryFee: shipping + codFee
+        })
+        dispatch(fetchCart())
+        setOrderSuccess(true)
+        return
+      }
 
       // 2. Create Razorpay Order
       const amountInPaise = Math.round(grandTotal * 100)
@@ -202,7 +215,8 @@ export default function Checkout() {
     }
   }
 
-  const grandTotal = Math.max(0, subtotal - discount + shipping)
+  const codFee = paymentMethod === 'COD' ? 10 : 0
+  const grandTotal = Math.max(0, subtotal - discount + shipping + codFee)
 
   return (
     <div className="container" style={{
@@ -405,7 +419,11 @@ export default function Checkout() {
 
               <div style={{ marginBottom: 'var(--space-lg)' }}>
                 {/* Razorpay Option */}
-                <div className="payment-option-card selected">
+                <div 
+                  className={`payment-option-card ${paymentMethod === 'ONLINE' ? 'selected' : ''}`}
+                  onClick={() => setPaymentMethod('ONLINE')}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className="payment-option-card-radio"></div>
                   <div className="payment-option-card-details">
                     <span className="payment-option-card-title">Razorpay Secure Checkout</span>
@@ -415,14 +433,14 @@ export default function Checkout() {
 
                 {/* COD Option */}
                 <div 
-                  className="payment-option-card"
-                  style={{ opacity: 0.5, cursor: 'not-allowed' }}
-                  onClick={() => toast.error('Cash on Delivery is currently unavailable for room addresses')}
+                  className={`payment-option-card ${paymentMethod === 'COD' ? 'selected' : ''}`}
+                  onClick={() => setPaymentMethod('COD')}
+                  style={{ cursor: 'pointer' }}
                 >
                   <div className="payment-option-card-radio"></div>
                   <div className="payment-option-card-details">
                     <span className="payment-option-card-title">Cash on Delivery (COD)</span>
-                    <span className="payment-option-card-desc">Temporarily unavailable for this address</span>
+                    <span className="payment-option-card-desc">Pay cash when your order arrives (+₹10 processing fee)</span>
                   </div>
                 </div>
               </div>
@@ -433,7 +451,7 @@ export default function Checkout() {
                 disabled={placing}
                 onClick={handlePlaceOrder}
               >
-                {placing ? '⏳ Processing...' : `🔒 Pay ₹${Math.round(grandTotal)}`}
+                {placing ? '⏳ Processing...' : paymentMethod === 'COD' ? `🚚 Place Order (₹${Math.round(grandTotal)})` : `🔒 Pay ₹${Math.round(grandTotal)}`}
               </button>
             </div>
           )}
@@ -464,6 +482,12 @@ export default function Checkout() {
             <div className="summary-row" style={{ color: 'var(--color-success)', fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>
               <span>Discount ({appliedCoupon.code})</span>
               <span>-₹{Math.round(discount)}</span>
+            </div>
+          )}
+          {paymentMethod === 'COD' && (
+            <div className="summary-row" style={{ fontSize: 'var(--font-size-sm)' }}>
+              <span style={{ color: 'var(--color-muted)' }}>COD Fee</span>
+              <span style={{ fontWeight: 600 }}>₹10</span>
             </div>
           )}
           <div className="summary-total" style={{ borderTop: '2px solid var(--color-bg)', paddingTop: 'var(--space-md)', marginTop: 'var(--space-sm)' }}>

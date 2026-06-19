@@ -86,6 +86,31 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
+    /**
+     * Place a Cash on Delivery (COD) order directly without Razorpay
+     */
+    @PostMapping("/payment/cod/place")
+    public ResponseEntity<OrderDTO> placeCodOrder(@RequestBody CODOrderRequest request) {
+        String emailId = authUtil.loggedInEmail();
+        OrderDTO order = orderService.placeOrder(
+                emailId,
+                request.getAddressId(),
+                "COD",
+                "COD-" + System.currentTimeMillis(),
+                null,
+                null,
+                "PENDING_COD",
+                request.getCouponCode(),
+                request.getDiscountAmount(),
+                request.getDeliveryFee()
+        );
+
+        // Send confirmation email asynchronously
+        orderRepository.findByIdWithItems(order.getOrderId()).ifPresent(emailService::sendOrderConfirmation);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
+    }
+
     // ===== ORDER MANAGEMENT =====
 
     @GetMapping("/orders/user")
