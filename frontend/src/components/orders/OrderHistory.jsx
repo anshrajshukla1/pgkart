@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet-async'
 import { fetchUserOrders, requestOrderReturn, addToCart } from '../../store/actions/index.js'
 import toast from 'react-hot-toast'
+import api from '../../api/api.js'
 
 const STATUS_MAP = {
   Order_Placed: { label: 'Order Placed', class: 'status-confirmed', step: 0 },
@@ -81,6 +82,8 @@ export default function OrderHistory() {
   const { orders, loading } = useSelector(state => state.orders)
   const [processingReturn, setProcessingReturn] = React.useState(null)
   const [returnConfirmModal, setReturnConfirmModal] = React.useState(null)
+  const [cancelConfirmModal, setCancelConfirmModal] = React.useState(null)
+  const [processingCancel, setProcessingCancel] = React.useState(null)
   const [activeTab, setActiveTab] = React.useState('All')
 
   const handleBuyAgain = async (order) => {
@@ -108,6 +111,21 @@ export default function OrderHistory() {
       toast.error('Failed to request return')
     } finally {
       setProcessingReturn(null)
+    }
+  }
+
+  const handleCancelOrder = async () => {
+    const orderId = cancelConfirmModal;
+    setCancelConfirmModal(null)
+    setProcessingCancel(orderId)
+    try {
+      await api.put(`/api/orders/user/${orderId}/cancel`)
+      toast.success('Order cancelled successfully')
+      dispatch(fetchUserOrders())
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to cancel order')
+    } finally {
+      setProcessingCancel(null)
     }
   }
 
@@ -299,8 +317,27 @@ export default function OrderHistory() {
                       }}
                       onClick={() => handleBuyAgain(order)}
                     >
-                      Buy Again
+                      <span style={{ marginRight: '0.35rem' }}>🔄</span> Buy it again
                     </button>
+                    
+                    {/* Cancel Order Button */}
+                    {['PENDING', 'Order_Placed', 'Confirmed'].includes(order.orderStatus) && (
+                      <button
+                        className="btn btn-outline"
+                        style={{
+                          borderRadius: 'var(--radius-pill)',
+                          padding: '0.45rem 1.15rem',
+                          fontSize: 'var(--font-size-xs)',
+                          borderColor: 'var(--color-error)',
+                          color: 'var(--color-error)',
+                          background: 'transparent'
+                        }}
+                        onClick={() => setCancelConfirmModal(order.orderId)}
+                        disabled={processingCancel === order.orderId}
+                      >
+                        {processingCancel === order.orderId ? 'Processing...' : 'Cancel Order'}
+                      </button>
+                    )}
 
                     {/* Return Request button */}
                     {order.orderStatus === 'Delivered' && (
@@ -374,6 +411,42 @@ export default function OrderHistory() {
                 disabled={processingReturn === returnConfirmModal}
               >
                 Yes, Request Return
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      {cancelConfirmModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          background: 'rgba(11,29,45,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div style={{
+            background: 'var(--color-white)', borderRadius: 'var(--radius-medium)', padding: 'var(--space-xl)', maxWidth: '400px', width: '90%',
+            boxShadow: 'var(--shadow-floating)', border: '1.5px solid var(--color-secondary)'
+          }}>
+            <h3 style={{ margin: '0 0 var(--space-md)', color: 'var(--color-midnight)', fontSize: 'var(--font-size-lg)' }}>Cancel Order</h3>
+            <p style={{ color: 'var(--color-muted)', marginBottom: 'var(--space-lg)', fontSize: 'var(--font-size-sm)', lineHeight: 1.5 }}>
+              Are you sure you want to cancel this order? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: 'var(--space-sm)', justifyContent: 'flex-end' }}>
+              <button
+                className="btn btn-outline"
+                onClick={() => setCancelConfirmModal(null)}
+                style={{ borderRadius: 'var(--radius-pill)', padding: '0.5rem 1.25rem' }}
+              >
+                No, Keep it
+              </button>
+              <button
+                className="btn"
+                style={{ background: 'var(--color-error)', color: 'white', borderRadius: 'var(--radius-pill)', padding: '0.5rem 1.25rem', border: 'none' }}
+                onClick={handleCancelOrder}
+                disabled={processingCancel === cancelConfirmModal}
+              >
+                Yes, Cancel Order
               </button>
             </div>
           </div>

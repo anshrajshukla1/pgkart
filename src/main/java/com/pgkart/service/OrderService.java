@@ -16,4 +16,5 @@ public interface OrderService {
     List<OrderDTO> getOrdersByEmail(String email);
     void requestReturn(Long orderId, String email);
     void handleReturnRequest(Long orderId, boolean approve);
+    void cancelOrder(Long orderId, String email);
 }

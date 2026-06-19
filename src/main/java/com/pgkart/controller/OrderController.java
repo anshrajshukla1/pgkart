@@ -151,6 +151,13 @@ public class OrderController {
         return ResponseEntity.ok(updated);
     }
 
+    @PutMapping("/orders/user/{orderId}/cancel")
+    public ResponseEntity<APIResponse> cancelOrder(@PathVariable Long orderId) {
+        String email = authUtil.loggedInEmail();
+        orderService.cancelOrder(orderId, email);
+        return ResponseEntity.ok(new APIResponse("Order cancelled successfully", true));
+    }
+
     // ===== RETURNS =====
 
     @PostMapping("/orders/{orderId}/return")

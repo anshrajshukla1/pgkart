@@ -191,7 +191,7 @@ export default function Checkout() {
     }
   }
 
-  if (!products || products.length === 0) {
+  if ((!products || products.length === 0) && !orderSuccess) {
     return (
       <div className="empty-state" style={{ minHeight: 'calc(100vh - 64px)' }}>
         <div className="empty-state-icon">🛒</div>

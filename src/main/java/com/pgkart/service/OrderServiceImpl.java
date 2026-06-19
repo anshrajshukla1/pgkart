@@ -225,4 +225,25 @@ public class OrderServiceImpl implements OrderService {
         }
         orderRepository.save(order);
     }
+
+    @Override
+    @Transactional
+    public void cancelOrder(Long orderId, String email) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ApiException("Order not found"));
+        if (!order.getEmail().equalsIgnoreCase(email)) {
+            throw new ApiException("Unauthorized to cancel this order");
+        }
+        
+        String status = order.getOrderStatus();
+        if ("Shipped".equalsIgnoreCase(status) || "Out_for_Delivery".equalsIgnoreCase(status) || "Delivered".equalsIgnoreCase(status)) {
+            throw new ApiException("Cannot cancel an order that has already been shipped or delivered");
+        }
+        if ("Cancelled".equalsIgnoreCase(status)) {
+            throw new ApiException("Order is already cancelled");
+        }
+        
+        order.setOrderStatus("Cancelled");
+        orderRepository.save(order);
+    }
 }
