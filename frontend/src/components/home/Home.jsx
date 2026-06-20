@@ -191,7 +191,7 @@ export default function Home() {
         <div className="hero-container">
           <div className="hero-left animate-fadeInUp">
             <div className="hero-badge">
-              <span style={{ fontSize: '1.2rem' }}>✨</span>
+              <span style={{ fontSize: '1.2rem' }}>🇮🇳</span>
               <span>LEVEL UP YOUR ROOM</span>
             </div>
             <span className="hero-eyebrow">PGKart Originals</span>
