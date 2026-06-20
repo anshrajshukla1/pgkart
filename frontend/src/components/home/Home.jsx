@@ -191,8 +191,8 @@ export default function Home() {
         <div className="hero-container">
           <div className="hero-left animate-fadeInUp">
             <div className="hero-badge">
-              <span className="hero-badge-sparkle">✨</span>
-              <span>The Student PG Starter Store</span>
+              <span style={{ fontSize: '1.2rem' }}>✨</span>
+              <span>LEVEL UP YOUR ROOM</span>
             </div>
             <span className="hero-eyebrow">PGKart Originals</span>
             <h1>
