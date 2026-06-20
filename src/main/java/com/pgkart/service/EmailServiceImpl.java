@@ -63,7 +63,7 @@ public class EmailServiceImpl implements EmailService {
             String html = templateEngine.process("email/order-confirmation", context);
             sendHtmlEmail(
                     order.getEmail(),
-                    "Order Confirmed \u2014 PGKart #" + order.getOrderId(),
+                    "Order Confirmed \u2014 PGKart",
                     html
             );
             log.info("Order confirmation email sent for order {}", order.getOrderId());
@@ -85,7 +85,7 @@ public class EmailServiceImpl implements EmailService {
             String html = templateEngine.process("email/order-shipped", context);
             sendHtmlEmail(
                     order.getEmail(),
-                    "Your Order Has Shipped \u2014 PGKart #" + order.getOrderId(),
+                    "Your Order Has Shipped \u2014 PGKart",
                     html
             );
             log.info("Order shipped email sent for order {}", order.getOrderId());
@@ -104,7 +104,7 @@ public class EmailServiceImpl implements EmailService {
             String html = templateEngine.process("email/order-delivered", context);
             sendHtmlEmail(
                     order.getEmail(),
-                    "Your Order Has Been Delivered \u2014 PGKart #" + order.getOrderId(),
+                    "Your Order Has Been Delivered \u2014 PGKart",
                     html
             );
             log.info("Order delivered email sent for order {}", order.getOrderId());
@@ -120,7 +120,7 @@ public class EmailServiceImpl implements EmailService {
             Context context = new Context();
             context.setVariable("orderId", order.getOrderId());
             String htmlBody = templateEngine.process("email/return-approved", context);
-            sendHtmlEmail(order.getEmail(), "Return Approved - PGKart Order #" + order.getOrderId(), htmlBody);
+            sendHtmlEmail(order.getEmail(), "Return Approved \u2014 PGKart", htmlBody);
             log.info("Return Approved email sent successfully for order {}", order.getOrderId());
         } catch (Exception e) {
             log.error("Failed to send return approved email for order {}", order.getOrderId(), e);
@@ -134,7 +134,7 @@ public class EmailServiceImpl implements EmailService {
             Context context = new Context();
             context.setVariable("orderId", order.getOrderId());
             String htmlBody = templateEngine.process("email/return-declined", context);
-            sendHtmlEmail(order.getEmail(), "Return Request Declined - PGKart Order #" + order.getOrderId(), htmlBody);
+            sendHtmlEmail(order.getEmail(), "Return Request Declined \u2014 PGKart", htmlBody);
             log.info("Return Declined email sent successfully for order {}", order.getOrderId());
         } catch (Exception e) {
             log.error("Failed to send return declined email for order {}", order.getOrderId(), e);
