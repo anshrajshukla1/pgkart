@@ -190,7 +190,7 @@ export default function Home() {
       <section className="hero">
         <div className="hero-container">
           <div className="hero-left animate-fadeInUp">
-            <div className="hero-badge">
+            <div className="hero-badge" style={{ gap: '0.35rem' }}>
               <span style={{ fontSize: '1.2rem' }}>💪</span>
               <span>LEVEL UP YOUR ROOM</span>
             </div>
