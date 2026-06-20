@@ -191,7 +191,7 @@ export default function Home() {
         <div className="hero-container">
           <div className="hero-left animate-fadeInUp">
             <div className="hero-badge">
-              <span style={{ fontSize: '1.2rem' }}>🇮🇳</span>
+              <img src="/indian-flag.jpg" alt="India" style={{ height: '1.2rem', width: 'auto', objectFit: 'contain' }} />
               <span>LEVEL UP YOUR ROOM</span>
             </div>
             <span className="hero-eyebrow">PGKart Originals</span>
