@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import toast from 'react-hot-toast'
 import {
@@ -18,11 +19,13 @@ const STATUS_CLASS = {
 
 export default function Orders() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [updating, setUpdating] = useState(null)
+  const [itemModal, setItemModal] = useState(null)
 
   const loadOrders = async (p = 0) => {
     setLoading(true)
@@ -128,8 +131,13 @@ export default function Orders() {
                       <div style={{ fontWeight: 600, color: 'var(--color-midnight)' }}>{order.orderItems?.length || 0} item(s)</div>
                       <div style={{ fontSize: 'var(--font-size-xs)', marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
                         {order.orderItems?.map((item, i) => (
-                          <span key={i} title={item.product?.productName || item.productName || 'Product'} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '220px', color: 'var(--color-muted)' }}>
-                            • {item.product?.productName || item.productName || 'Product'} <span style={{ opacity: 0.7 }}>(x{item.quantity})</span>
+                          <span 
+                            key={i} 
+                            title={item.product?.productName || item.productName || 'Product'} 
+                            style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '220px', color: 'var(--color-primary)', cursor: 'pointer', textDecoration: 'underline' }}
+                            onClick={() => setItemModal(item)}
+                          >
+                            • {item.product?.productName || item.productName || 'Product'} <span style={{ opacity: 0.7, color: 'var(--color-muted)', textDecoration: 'none' }}>(x{item.quantity})</span>
                           </span>
                         ))}
                       </div>
@@ -252,6 +260,65 @@ export default function Orders() {
           </div>
         </div>
       )}
+
+      {/* Item Details Modal */}
+      {itemModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          background: 'rgba(11,29,45,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+          backdropFilter: 'blur(4px)'
+        }} onClick={() => setItemModal(null)}>
+          <div style={{
+            background: 'var(--color-white)', borderRadius: 'var(--radius-medium)', padding: 'var(--space-xl)', maxWidth: '450px', width: '90%',
+            boxShadow: 'var(--shadow-floating)', border: '1.5px solid var(--color-secondary)'
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
+              <h3 style={{ margin: 0, color: 'var(--color-midnight)', fontSize: 'var(--font-size-lg)' }}>Item Details</h3>
+              <button onClick={() => setItemModal(null)} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: 'var(--color-muted)' }}>✕</button>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', background: 'var(--color-surface)', padding: '1rem', borderRadius: 'var(--radius-base)' }}>
+              <div style={{ width: '80px', height: '80px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', background: '#fff', border: '1px solid var(--color-secondary)' }}>
+                <img 
+                  src={(itemModal.product?.image || itemModal.product?.image1) ? `${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/public/products/image/${itemModal.product?.image || itemModal.product?.image1}` : '/placeholder.png'} 
+                  alt={itemModal.product?.productName || itemModal.productName}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/80x80/EEF2FF/0D5B63?text=N/A' }}
+                />
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <h4 style={{ margin: '0 0 0.25rem 0', color: 'var(--color-midnight)', fontSize: '1rem' }}>
+                  {itemModal.product?.productName || itemModal.productName || 'Unknown Product'}
+                </h4>
+                <div style={{ fontSize: '0.9rem', color: 'var(--color-muted)', marginBottom: '0.25rem' }}>
+                  Quantity: <strong style={{ color: 'var(--color-midnight)' }}>{itemModal.quantity}</strong>
+                </div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--color-muted)' }}>
+                  Price: <strong style={{ color: 'var(--color-midnight)' }}>₹{Math.round(itemModal.orderedProductPrice || itemModal.specialPrice || itemModal.product?.specialPrice || 0)}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  const productId = itemModal.product?.productId || itemModal.productId;
+                  if (productId) {
+                    navigate(`/products/${productId}`);
+                  } else {
+                    toast.error('Product ID not found');
+                  }
+                }}
+                style={{ borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.25rem', width: '100%' }}
+              >
+                Go to Product Page
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }
