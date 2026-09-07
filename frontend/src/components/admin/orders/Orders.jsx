@@ -125,7 +125,14 @@ export default function Orders() {
                       <div style={{ fontWeight: 600, fontSize: 'var(--font-size-sm)', color: 'var(--color-midnight)' }}>{order.email || 'N/A'}</div>
                     </td>
                     <td style={{ color: 'var(--color-muted)', fontSize: 'var(--font-size-sm)' }}>
-                      {order.orderItems?.length || 0} item(s)
+                      <div style={{ fontWeight: 600, color: 'var(--color-midnight)' }}>{order.orderItems?.length || 0} item(s)</div>
+                      <div style={{ fontSize: 'var(--font-size-xs)', marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                        {order.orderItems?.map((item, i) => (
+                          <span key={i} title={item.product?.productName || item.productName || 'Product'} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '220px', color: 'var(--color-muted)' }}>
+                            • {item.product?.productName || item.productName || 'Product'} <span style={{ opacity: 0.7 }}>(x{item.quantity})</span>
+                          </span>
+                        ))}
+                      </div>
                     </td>
                     <td style={{ fontWeight: 700, color: 'var(--color-midnight)' }}>₹{Math.round(order.totalAmount || 0)}</td>
                     <td style={{ color: 'var(--color-muted)', fontSize: 'var(--font-size-xs)' }}>
