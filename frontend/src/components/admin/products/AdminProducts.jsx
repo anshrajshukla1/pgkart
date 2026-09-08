@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 import api from '../../../api/api.js'
 import {
   fetchProducts, adminCreateProduct, adminUpdateProduct,
-  adminDeleteProduct, adminUploadProductImage, adminFetchAllCategories
+  adminDeleteProduct, adminUploadProductImages, adminFetchAllCategories
 } from '../../../store/actions/index.js'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
@@ -25,7 +25,7 @@ export default function AdminProducts() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [editId, setEditId] = useState(null)
-  const [imageFile, setImageFile] = useState(null)
+  const [imageFiles, setImageFiles] = useState([])   // up to 4 files
   const [saving, setSaving] = useState(false)
   const [imageUploadId, setImageUploadId] = useState(null)
 
@@ -100,21 +100,22 @@ export default function AdminProducts() {
         toast.success('Product created!')
       }
 
-      // Upload image if selected
-      if (imageFile && productId) {
+      // Upload images (up to 4) if selected
+      if (imageFiles.length > 0 && productId) {
         const fd = new FormData()
-        fd.append('image', imageFile)
-        await dispatch(adminUploadProductImage(productId, fd))
-        toast.success('Image uploaded!')
+        imageFiles.forEach(f => fd.append('images', f))
+        await dispatch(adminUploadProductImages(productId, fd))
+        toast.success(`${imageFiles.length} image(s) uploaded!`)
       }
 
       setForm(EMPTY_FORM)
       setEditId(null)
       setShowForm(false)
-      setImageFile(null)
+      setImageFiles([])
       loadProducts(page)
-    } catch {
-      toast.error('Failed to save product')
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || err.response?.data || 'Failed to save product');
     } finally {
       setSaving(false)
     }
@@ -201,17 +202,37 @@ export default function AdminProducts() {
                 </label>
               </div>
               <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                <label className="form-label">Product Image</label>
+                <label className="form-label">Product Images <span style={{ fontWeight: 400, color: 'var(--color-muted)' }}>(up to 4 — first image is primary)</span></label>
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   className="form-control"
-                  onChange={e => setImageFile(e.target.files[0])}
+                  onChange={e => {
+                    const files = Array.from(e.target.files).slice(0, 4)
+                    setImageFiles(files)
+                  }}
                 />
-                {imageFile && (
-                  <span style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginTop: '0.25rem', display: 'block' }}>
-                    📎 {imageFile.name}
-                  </span>
+                {imageFiles.length > 0 && (
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+                    {imageFiles.map((f, i) => (
+                      <div key={i} style={{ position: 'relative' }}>
+                        <img
+                          src={URL.createObjectURL(f)}
+                          alt={`preview-${i}`}
+                          style={{ width: '72px', height: '72px', objectFit: 'cover', borderRadius: '8px', border: '2px solid var(--color-secondary)' }}
+                        />
+                        {i === 0 && (
+                          <span style={{ position: 'absolute', bottom: 2, left: 2, background: 'var(--color-primary)', color: '#fff', fontSize: '9px', padding: '1px 4px', borderRadius: '4px', fontWeight: 700 }}>PRIMARY</span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setImageFiles(prev => prev.filter((_, idx) => idx !== i))}
+                          style={{ position: 'absolute', top: -6, right: -6, background: 'var(--color-error)', color: '#fff', border: 'none', borderRadius: '50%', width: '18px', height: '18px', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >✕</button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>

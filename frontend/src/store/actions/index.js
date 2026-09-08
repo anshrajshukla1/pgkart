@@ -224,6 +224,13 @@ export const adminUploadProductImage = (productId, formData) => async () => {
   return data
 }
 
+export const adminUploadProductImages = (productId, formData) => async () => {
+  const { data } = await api.put(`/api/admin/products/${productId}/images`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+  return data
+}
+
 // Legacy aliases for backward compatibility
 export const getUserCart = fetchCart
 export const getUserAddresses = () => async () => { /* no-op */ }

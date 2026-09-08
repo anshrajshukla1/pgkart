@@ -23,6 +23,9 @@ public class Product {
     private String productName;
 
     private String image;
+    private String image2;
+    private String image3;
+    private String image4;
 
     @NotBlank
     @Size(min = 6)

@@ -150,6 +150,29 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    public ProductDTO updateProductImages(Long productId, MultipartFile[] images) throws IOException {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId.toString()));
+
+        // Upload each slot; skip nulls/empty
+        String[] slots = new String[4];
+        for (int i = 0; i < Math.min(images.length, 4); i++) {
+            if (images[i] != null && !images[i].isEmpty()) {
+                slots[i] = uploadToCloudinary(images[i]);
+            }
+        }
+        if (slots[0] != null) product.setImage(slots[0]);
+        if (slots[1] != null) product.setImage2(slots[1]);
+        if (slots[2] != null) product.setImage3(slots[2]);
+        if (slots[3] != null) product.setImage4(slots[3]);
+
+        ProductDTO dto = modelMapper.map(productRepository.save(product), ProductDTO.class);
+        if (product.getCategory() != null) dto.setCategoryName(product.getCategory().getCategoryName());
+        return dto;
+    }
+
+    @Override
+    @Transactional
     public ProductDTO deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId.toString()));

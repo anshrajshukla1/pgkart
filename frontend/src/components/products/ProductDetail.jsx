@@ -19,7 +19,6 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [qty, setQty] = useState(1)
   const [adding, setAdding] = useState(false)
-  const [activeThumb, setActiveThumb] = useState(0)
 
   useEffect(() => {
     setLoading(true)
@@ -44,7 +43,7 @@ export default function ProductDetail() {
 
   const {
     productName, price, specialPrice, discount,
-    quantity, image, description, category
+    quantity, image, image2, image3, image4, description, category
   } = product
 
   const displayPrice = specialPrice || price
@@ -52,10 +51,13 @@ export default function ProductDetail() {
   const isOutOfStock = quantity === 0
   const isLowStock = quantity > 0 && quantity <= 5
 
-  const imageUrl = image
-    ? (image.startsWith('http') ? image : `${BASE_URL}/images/products/${image}`)
-    : null
+  // Build ordered list of all available image URLs
+  const allImages = [image, image2, image3, image4]
+    .filter(Boolean)
+    .map(img => img.startsWith('http') ? img : `${BASE_URL}/images/products/${img}`)
 
+  const [activeThumbIdx, setActiveThumbIdx] = useState(0)
+  const mainImage = allImages[activeThumbIdx] || null
   const handleAddToCart = async () => {
     if (!auth?.user) { navigate('/login'); return }
     setAdding(true)
@@ -85,9 +87,9 @@ export default function ProductDetail() {
         {/* Left Column: Images */}
         <div className="product-detail-left">
           <div className="product-detail-main-image">
-            {imageUrl ? (
+            {mainImage ? (
               <img
-                src={imageUrl}
+                src={mainImage}
                 alt={productName}
                 onError={e => { e.target.src = `https://placehold.co/500x500/EEF2FF/0D5B63?text=${encodeURIComponent(productName?.charAt(0) || 'P')}` }}
               />
@@ -98,7 +100,31 @@ export default function ProductDetail() {
               }}>🛍️</div>
             )}
           </div>
-          </div>
+
+          {/* Thumbnail row — only shown when there are 2+ images */}
+          {allImages.length > 1 && (
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+              {allImages.map((src, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveThumbIdx(i)}
+                  style={{
+                    padding: 0, border: 'none', borderRadius: '8px', cursor: 'pointer',
+                    outline: i === activeThumbIdx ? '2.5px solid var(--color-primary)' : '2px solid var(--color-secondary)',
+                    overflow: 'hidden', background: 'none'
+                  }}
+                >
+                  <img
+                    src={src}
+                    alt={`thumb-${i}`}
+                    style={{ width: '64px', height: '64px', objectFit: 'cover', display: 'block' }}
+                    onError={e => { e.target.src = `https://placehold.co/64x64/EEF2FF/0D5B63?text=${i + 1}` }}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Right Column: Info details (Sticky on scroll) */}
         <div className="product-detail-right">

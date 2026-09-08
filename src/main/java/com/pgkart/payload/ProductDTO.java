@@ -12,6 +12,9 @@ public class ProductDTO {
     private Long productId;
     private String productName;
     private String image;
+    private String image2;
+    private String image3;
+    private String image4;
 
     @JsonProperty("description")
     private String productDescription;

@@ -93,6 +93,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProductImage(productId, image));
     }
 
+    @PutMapping(value = "/admin/products/{productId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductDTO> updateProductImages(
+            @PathVariable Long productId,
+            @RequestParam("images") MultipartFile[] images) throws IOException {
+        return ResponseEntity.ok(productService.updateProductImages(productId, images));
+    }
+
     @DeleteMapping({"/admin/products/{productId}", "/admin/product/{productId}"})
     public ResponseEntity<APIResponse> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
