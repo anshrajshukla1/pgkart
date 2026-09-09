@@ -19,6 +19,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [qty, setQty] = useState(1)
   const [adding, setAdding] = useState(false)
+  const [activeThumbIdx, setActiveThumbIdx] = useState(0)
 
   useEffect(() => {
     setLoading(true)
@@ -56,7 +57,6 @@ export default function ProductDetail() {
     .filter(Boolean)
     .map(img => img.startsWith('http') ? img : `${BASE_URL}/images/products/${img}`)
 
-  const [activeThumbIdx, setActiveThumbIdx] = useState(0)
   const mainImage = allImages[activeThumbIdx] || null
   const handleAddToCart = async () => {
     if (!auth?.user) { navigate('/login'); return }
