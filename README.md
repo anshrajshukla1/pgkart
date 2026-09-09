@@ -1,4 +1,5 @@
 # 🛒 PGKart
+<!-- Last updated: 2026-09-09 -->
 
 Welcome to **PGKart**! This is a modern, full-stack e-commerce platform specifically tailored for students living in Hostels and PGs. Moving to a new city can be overwhelming, and finding those essential day-to-day items (like buckets, study lamps, toiletries, and bedding) shouldn't be a hassle. PGKart solves this by bringing everything a student needs into one place, with fast delivery and student-friendly prices.
 
